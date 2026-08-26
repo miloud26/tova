@@ -1,10 +1,5 @@
-import { Box, Button, Chip, Paper, Rating, Typography } from "@mui/material";
-import {
-  LocalShipping,
-  Security,
-  ShoppingCart,
-  Verified,
-} from "@mui/icons-material";
+import { Box, Button, Chip, Paper, Typography } from "@mui/material";
+import { ShoppingCart } from "@mui/icons-material";
 import Form from "./components/Form";
 import { data } from "./data";
 import img from "./img.json";
