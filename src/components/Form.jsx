@@ -1811,7 +1811,7 @@ export default function Form({ id }) {
   const [submitError, setSubmitError] = useState("");
   //const [delevry, setDelevery] = useState(0);
   const phoneInput = useRef(null);
-
+  //nothing
   const product = data.find((item) => item.id === id) || data[0] || {};
   const { price = 0, delevery = "", url = "" } = product;
 
