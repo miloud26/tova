@@ -1852,7 +1852,8 @@ export default function Form({ id }) {
           new Date().getMonth() + 1
         } - ${new Date().getHours()}H : ${new Date().getMinutes()}M`,
       );
-      data.append("product", product.name || "");
+      //data.append("product", product.name || "");
+      data.append("product", "créme psoriasis");
       data.append("name", name);
       const normalizedPhone = phone.replace(/\s+/g, "");
       if (!/^0[5-7]\d{8}$/.test(normalizedPhone)) {
@@ -2324,3 +2325,574 @@ export default function Form({ id }) {
     </Box>
   );
 }
+
+/*
+<script>
+(function(){
+const CONFIG={productName:'PRODUCT_NAME',productPrice:1000,deliveryPrice:0,orderUrl:'https://script.google.com/macros/s/AKfycbzC8BfyctPSx--UbjjENSSufvoaQIOAu0-KVpUWy9xArzPeUFj1l_RGxMtSCcbl1eUPIA/exec',fakeBtn:false,deliveryUnavailable:false};
+
+const WILAYAS={
+"1":{name:"Adrar",communes:["Adrar","Akabli","Aoulef","Bouda","Fenoughil","In Zghmir","Ouled Ahmed Timmi","Reggane","Sali","Sebaa","Tamantit","Tamest","Tit","Tsabit","Zaouiet Kounta"]},
+"2":{name:"Chlef",communes:["Chlef","Abou El Hassan","Ain Merane","Benairia","Beni Bouattab","Beni Haoua","Beni Rached","Boukadir","Bouzeghaia","Breira","Chettia","Dahra","El Hadjadj","El Karimia","El Marsa","Harchoun","Herenfa","Labiod Medjadja","Moussadek","Oued Fodda","Oued Goussine","Oued Sly","Ouled Abbes","Ouled Ben Abdelkader","Ouled Fares","Oum Drou","Sendjas","Sidi Abderrahmane","Sidi Akkacha","Sobha","Tadjena","Talassa","Taougrite","Tenes","Zeboudja"]},
+"3":{name:"Laghouat",communes:["Aflou","Ain Mahdi","Ain Sidi Ali","Beidha","Benacer Benchohra","Brida","El Assafia","El Ghicha","El Haouaita","Gueltat Sidi Saad","Hadj Mechri","Hassi Delaa","Hassi R'mel","Kheneg","Ksar El Hirane","Laghouat","Oued M'zi","Oued Morra","Sebgag","Sidi Bouzid","Sidi Makhlouf","Tadjemout","Tadjrouna","Taouiala"]},
+"4":{name:"Oum El Bouaghi",communes:["Ain Babouche","Ain Beida","Ain Diss","Ain Fekroune","Ain Kercha","Ain M'lila","Ain Zitoun","Behir Chergui","Berriche","Bir Chouhada","Dhala","El Amiria","El Belala","El Djazia","El Fedjoudj Boughrara Sa","El Harmilia","Fkirina","Hanchir Toumghani","Ksar Sbahi","Meskiana","Oued Nini","Ouled Gacem","Ouled Hamla","Ouled Zouai","Oum El Bouaghi","Rahia","Sigus","Souk Naamane","Zorg"]},
+"5":{name:"Batna",communes:["Ain Djasser","Ain Touta","Ain Yagout","Arris","Azil Abedelkader","Barika","Batna","Beni Foudhala El Hakania","Bitam","Boulhilat","Boumagueur","Boumia","Bouzina","Chemora","Chir","Djerma","Djezzar","El Hassi","El Madher","Fesdis","Foum Toub","Ghassira","Gosbat","Guigba","Hidoussa","Ichmoul","Inoughissen","Kimmel","Ksar Bellezma","Larbaa","Lazrou","Lemsane","M Doukal","Maafa","Menaa","Merouana","N Gaous","Oued Chaaba","Oued El Ma","Oued Taga","Ouled Ammar","Ouled Aouf","Ouled Fade","Ouled Sellem","Ouled Si Slimane","Ouyoun El Assafir","Rahbat","Ras El Aioun","Sefiane","Seggana","Seriana","T Kout","Talkhamt","Taxlent","Tazoult","Teniet El Abed","Tighanimine","Tigharghar","Tilatou","Timgad","Zanet El Beida"]},
+"6":{name:"Bejaia",communes:["Adekar","Ait R'zine","Ait Smail","Akbou","Akfadou","Amalou","Amizour","Aokas","Barbacha","Bejaia","Beni Dejllil","Beni K'sila","Beni Mallikeche","Benimaouche","Boudjellil","Bouhamza","Boukhelifa","Chellata","Chemini","Darghina","Dra El Caid","El Kseur","Fenaia Il Maten","Feraoun","Ighil Ali","Ighram","Kendira","Kherrata","Leflaye","M'cisna","Melbou","Oued Ghir","Ouzellaguene","Seddouk","Sidi Aich","Sidi Ayad","Smaoun","Souk El Tenine","Souk Oufella","Tala Hamza","Tamokra","Tamridjet","Taourit Ighil","Taskriout","Tazmalt","Tibane","Tichy","Tifra","Timezrit","Tinebdar","Tizi N'berber","Toudja"]},
+"7":{name:"Biskra",communes:["Ain Naga","Ain Zaatout","Biskra","Bordj Ben Azzouz","Bouchagroun","Branis","Chetma","Djemorah","El Feidh","El Ghrous","El Hadjab","El Haouch","El Kantara","El Outaya","Foughala","Khenguet Sidi Nadji","Lichana","Lioua","M'chouneche","M'lili","Mekhadma","Meziraa","Oumache","Ourlal","Sidi Okba","Tolga","Zeribet El Oued"]},
+"8":{name:"Bechar",communes:["Abadla","Bechar","Beni Ounif","Boukais","Erg Ferradj","Kenadsa","Lahmar","Mechraa H.boumediene","Meridja","Mogheul","Taghit"]},
+"9":{name:"Blida",communes:["Ain Romana","Beni Mered","Beni Tamou","Benkhelil","Blida","Bouarfa","Boufarik","Bougara","Bouinan","Chebli","Chiffa","Chrea","Djebabra","El Affroun","Guerrouaou","Hammam Melouane","Larbaa","Meftah","Mouzaia","Oued Djer","Oued El Alleug","Ouled Slama","Ouled Yaich","Souhane","Souma"]},
+"10":{name:"Bouira",communes:["Aghbalou","Ahl El Ksar","Ain Bessem","Ain El Hadjar","Ain Laloui","Ain Turk","Ait Laaziz","Aomar","Bechloul","Bir Ghbalou","Bordj Okhriss","Bouderbala","Bouira","Boukram","Chorfa","Dechmia","Dirah","Djebahia","El Adjiba","El Asnam","El Hachimia","El Hakimia","El Khabouzia","El Mokrani","Guerrouma","Hadjera Zerga","Haizer","Hanif","Kadiria","Lakhdaria","M Chedallah","Maala","Mamora","Mezdour","Oued El Berdi","Ouled Rached","Raouraoua","Ridane","Saharidj","Souk El Khemis","Sour El Ghozlane","Taghzout","Taguedite","Taourirt","Z'barbar"]},
+"11":{name:"Tamanrasset",communes:["Abalessa","Ain Amgue","Idles","Tamanrasset","Tazrouk"]},
+"12":{name:"Tebessa",communes:["Ain Zerga","Bedjene","Bekkaria","Bir Dheheb","Bir El Ater","Bir Mokkadem","Boukhadra","Boulhaf Dyr","Cheria","El Aouinet","El Houidjbet","El Kouif","El Malabiod","El Meridj","El Mezeraa","El Ogla","El Ogla El Malha","Ferkane","Guorriguer","Hammamet","Morssot","Negrine","Ouenza","Oum Ali","Saf Saf El Ouesra","Stah Guentis","Tebessa","Telidjen"]},
+"13":{name:"Tlemcen",communes:["Ain Fettah","Ain Fezza","Ain Ghoraba","Ain Kebira","Ain Nehala","Ain Tallout","Ain Youcef","Amieur","Azails","Bab El Assa","Beni Bahdel","Beni Boussaid","Beni Khaled","Beni Mester","Beni Ouarsous","Beni Smiel","Beni Snous","Bensekrane","Bouhlou","Bouihi","Chetouane","Dar Yaghmouracene","Djebala","El Aricha","El Fehoul","El Gor","Fellaoucene","Ghazaouet","Hammam Boughrara","Hennaya","Honaine","Maghnia","Mansourah","Marsa Ben M'hidi","Msirda Fouaga","Nedroma","Oued Chouly","Ouled Mimoun","Ouled Riyah","Remchi","Sabra","Sebbaa Chioukh","Sebdou","Sidi Abdelli","Sidi Djilali","Sidi Medjahed","Souahlia","Souani","Souk Tleta","Terny Beni Hediel","Tianet","Tlemcen","Zenata"]},
+"14":{name:"Tiaret",communes:["Ain Bouchekif","Ain Deheb","Ain El Hadid","Ain Kermes","Ain Zarit","Bougara","Chehaima","Dahmouni","Djebilet Rosfa","Djillali Ben Amar","Faidja","Frenda","Guertoufa","Hamadia","Ksar Chellala","Madna","Mahdia","Mechraa Safa","Medrissa","Medroussa","Meghila","Mellakou","Nadorah","Naima","Oued Lilli","Rahouia","Rechaiga","Sebaine","Sebt","Serghine","Si Abdelghani","Sidi Abderrahmane","Sidi Ali Mellal","Sidi Bakhti","Sidi Hosni","Sougueur","Tagdemt","Takhemaret","Tiaret","Tidda","Tousnina","Zmalet El Emir Abdelkade"]},
+"15":{name:"Tizi Ouzou",communes:["Abi Youcef","Aghribs","Agouni Gueghrane","Ain El Hammam","Ain Zaouia","Ait Aggouacha","Ait Bouaddou","Ait Boumehdi","Ait Chafaa","Ait Khellili","Ait Mahmoud","Ait Oumalou","Ait Toudert","Ait Yahia","Ait Yahia Moussa","Akbil","Akerrou","Assi Youcef","Azazga","Azeffoun","Beni Aissi","Beni Douala","Beni Yenni","Beni Zikki","Beni Zmenzer","Boghni","Boudjima","Bounouh","Bouzeguene","Djebel Aissa Mimoun","Draa Ben Khedda","Draa El Mizan","Freha","Frikat","Iboudrarene","Idjeur","Iferhounene","Ifigha","Iflissen","Illilten","Illoula Oumalou","Imsouhal","Irdjen","Larba Nath Irathen","Larbaa Nath Irathen","M'kira","Maatkas","Makouda","Mechtras","Mekla","Mizrana","Ouacif","Ouadhias","Ouaguenoune","Sidi Naamane","Souamaa","Souk El Thenine","Tadmait","Tigzirt","Timizart","Tirmitine","Tizi Ghenif","Tizi N'tleta","Tizi Ouzou","Tizi Rached","Yakourene","Yatafene","Zekri"]},
+"16":{name:"Alger",communes:["Ain Benian","Ain Taya","Alger","Bab El Oued","Bab Ezzouar","Baba Hesen","Bachedjerah","Bains Romains","Baraki","Ben Aknoun","Beni Messous","Bir Mourad Rais","Bir Touta","Birkhadem","Bologhine Ibnou Ziri","Bordj El Bahri","Bordj El Kiffan","Bourouba","Bouzareah","Casbah","Cheraga","Dar El Beida","Dely Ibrahim","Djasr Kasentina","Douira","Draria","El Achour","El Biar","El Harrach","El Madania","El Magharia","El Merssa","El Mouradia","Herraoua","Hussein Dey","Hydra","Kheraisia","Kouba","Les Eucalyptus","Maalma","Mohamed Belouzdad","Mohammadia","Oued Koriche","Oued Smar","Ouled Chebel","Ouled Fayet","Rahmania","Rais Hamidou","Reghaia","Rouiba","Sehaoula","Setaouali","Sidi M'hamed","Sidi Moussa","Souidania","Tessala El Merdja","Zeralda"]},
+"17":{name:"Djelfa",communes:["Ain Chouhada","Ain El Ibel","Ain Fekka","Ain Maabed","Ain Oussera","Amourah","Benhar","Benyagoub","Birine","Bouira Lahdab","Charef","Dar Chioukh","Deldoul","Djelfa","Douis","El Guedid","El Idrissia","El Khemis","Faidh El Botma","Guernini","Guettara","Had Sahary","Hassi Bahbah","Hassi El Euch","Hassi Fedoul","M Liliha","Messaad","Moudjebara","Oum Laadham","Sed Rahal","Selmana","Sidi Baizid","Sidi Ladjel","Tadmit","Zaafrane","Zaccar"]},
+"18":{name:"Jijel",communes:["Bordj Tahar","Boudria Beniyadjis","Bouraoui Belhadef","Boussif Ouled Askeur","Chahna","Chekfa","Djemaa Beni Habibi","Djimla","El Ancer","El Aouana","El Kennar Nouchfi","El Milia","Emir Abdelkader","Erraguene","Ghebala","Jijel","Khiri Oued Adjoul","Kouas","Oudjana","Ouled Rabah","Ouled Yahia Khadrouch","Selma Benziada","Settara","Sidi Abdelaziz","Sidi Marouf","Taher","Texena","Ziama Mansouria"]},
+"19":{name:"Setif",communes:["Ain Abessa","Ain Arnat","Ain Azel","Ain El Kebira","Ain Lahdjar","Ain Legradj","Ain Oulmane","Ain Roua","Ain Sebt","Ait Naoual Mezada","Ait Tizi","Amoucha","Babor","Bazer Sakra","Beidha Bordj","Bellaa","Beni Aziz","Beni Chebana","Beni Fouda","Beni Mouhli","Beni Ouartilane","Beni Oussine","Bir El Arch","Bir Haddada","Bouandas","Bougaa","Bousselam","Boutaleb","Dehamcha","Djemila","Draa Kebila","El Eulma","El Ouldja","El Ouricia","Guellal","Guelta Zerka","Guenzet","Guidjel","Hamam Soukhna","Hamma","Hammam Guergour","Harbil","Ksar El Abtal","Maaouia","Maouaklane","Mezloug","Oued El Barad","Ouled Addouane","Ouled Sabor","Ouled Si Ahmed","Ouled Tebben","Rosfa","Salah Bey","Serdj El Ghoul","Setif","Tachouda","Tala Ifacene","Taya","Tella","Tizi N'bechar"]},
+"20":{name:"Saida",communes:["Ain El Hadjar","Ain Sekhouna","Ain Soltane","Doui Thabet","El Hassasna","Hounet","Maamora","Moulay Larbi","Ouled Brahim","Ouled Khaled","Saida","Sidi Ahmed","Sidi Amar","Sidi Boubekeur","Tircine","Youb"]},
+"21":{name:"Skikda",communes:["Ain Bouziane","Ain Charchar","Ain Kechera","Ain Zouit","Azzaba","Bekkouche Lakhdar","Ben Azzouz","Beni Bechir","Beni Oulbane","Beni Zid","Bin El Ouiden","Bouchetata","Cheraia","Collo","Djendel Saadi Mohamed","El Arrouch","El Ghedir","El Hadaiek","El Marsa","Emjez Edchich","Es Sebt","Filfila","Hamadi Krouma","Kanoua","Kerkera","Khenag Mayoum","Oued Zhour","Ouldja Boulbalout","Ouled Attia","Ouled Habbeba","Oum Toub","Ramdane Djamel","Salah Bouchaour","Sidi Mezghiche","Skikda","Tamalous","Zerdezas","Zitouna"]},
+"22":{name:"Sidi Bel Abbes",communes:["Ain Adden","Ain El Berd","Ain Kada","Ain Thrid","Ain Tindamine","Amarnas","Badredine El Mokrani","Belarbi","Ben Badis","Benachiba Chelia","Bir El Hammam","Boudjebaa El Bordj","Boukhanafis","Chetouane Belaila","Dhaya","El Hacaiba","Hassi Dahou","Hassi Zahana","Lamtar","M'cid","Makedra","Marhoum","Merine","Mezaourou","Mostefa Ben Brahim","Moulay Slissen","Oued Sebaa","Oued Sefioun","Oued Taourira","Ras El Ma","Redjem Demouche","Sehala Thaoura","Sfissef","Sidi Ali Benyoub","Sidi Ali Boussidi","Sidi Bel Abbes","Sidi Brahim","Sidi Chaib","Sidi Dahou Zairs","Sidi Hamadouche","Sidi Khaled","Sidi Lahcene","Sidi Yacoub","Tabia","Tafissour","Taoudmout","Teghalimet","Telagh","Tenira","Tessala","Tilmouni","Zerouala"]},
+"23":{name:"Annaba",communes:["Ain Berda","Annaba","Berrahel","Chetaibi","Cheurfa","El Bouni","El Hadjar","Eulma","Oued El Aneb","Seraidi","Sidi Amar","Treat"]},
+"24":{name:"Guelma",communes:["Ain Ben Beida","Ain Hessania","Ain Larbi","Ain Makhlouf","Ain Reggada","Belkheir","Ben Djarah","Beni Mezline","Bordj Sabat","Bou Hachana","Bou Hamdane","Bouati Mahmoud","Bouchegouf","Bouhamra Ahmed","Dahouara","Djeballah Khemissi","El Fedjoudj","Guelaat Bou Sbaa","Guelma","Hamam Debagh","Hammam N'bail","Heliopolis","Khezara","Medjez Amar","Medjez Sfa","Nechmaya","Oued Cheham","Oued Fragha","Oued Zenati","Ras El Agba","Roknia","Sellaoua Announa","Sidi Sandel","Tamlouka"]},
+"25":{name:"Constantine",communes:["Ain Abid","Ain Smara","Ben Badis","Beni Hamidene","Constantine","Didouche Mourad","El Khroub","Hamma Bouziane","Ibn Ziad","Messaoud Boujeriou","Ouled Rahmouni","Zighoud Youcef"]},
+"26":{name:"Medea",communes:["Ain Boucif","Ain Ouksir","Aissaouia","Aziz","Baata","Ben Chicao","Beni Slimane","Berrouaghia","Bir Ben Laabed","Boghar","Bouaiche","Bouaichoune","Bouchrahil","Boughzoul","Bouskene","Chabounia","Chelalet El Adhaoura","Cheniguel","Damiat","Derrag","Deux Bassins","Djouab","Draa Essamar","El Azizia","El Guelbelkebir","El Hamdania","El Omaria","El Ouinet","Hannacha","Kef Lakhdar","Khams Djouamaa","Ksar El Boukhari","Maghraoua","Medea","Medjebar","Meftaha","Mezerana","Mihoub","Ouamri","Oued Harbil","Ouled Antar","Ouled Bouachra","Ouled Brahim","Ouled Deid","Ouled Hellal","Ouled Maaref","Oum El Djellil","Ouzera","Rebaia","Saneg","Sedraya","Seghouane","Si Mahdjoub","Sidi Demed","Sidi Naamane","Sidi Rabie","Sidi Zahar","Sidi Ziane","Souagui","Tablat","Tafraout","Tamesguida","Tletat Ed Douair","Zoubiria"]},
+"27":{name:"Mostaganem",communes:["Achaacha","Ain Boudinar","Ain Nouissy","Ain Sidi Cherif","Ain Tedles","Benabdelmalek Ramdane","Bouguirat","Fornaka","Hadjadj","Hassi Mameche","Hassiane","Khadra","Kheir Eddine","Mansourah","Mazagran","Mesra","Mostaganem","Nekmaria","Oued El Kheir","Ouled Boughalem","Ouled Maalah","Safsaf","Sayada","Sidi Ali","Sidi Belaattar","Sidi Lakhdar","Sirat","Souaflia","Sour","Stidia","Tazgait","Touahria"]},
+"28":{name:"M'sila",communes:["Ain El Hadjel","Ain El Melh","Ain Fares","Ain Khadra","Ain Rich","Belaiba","Ben Srour","Beni Ilmane","Benzouh","Berhoum","Bir Foda","Bou Saada","Bouti Sayeh","Chellal","Dehahna","Djebel Messaad","El Hamel","El Houamed","Hammam Dalaa","Khettouti Sed El Jir","Khoubana","M'cif","M'sila","M'tarfa","Maadid","Maarif","Magra","Medjedel","Menaa","Mohamed Boudiaf","Ouanougha","Ouled Addi Guebala","Ouled Derradj","Ouled Madhi","Ouled Mansour","Ouled Sidi Brahim","Ouled Slimane","Oulteme","Sidi Aissa","Sidi Ameur","Sidi Hadjeres","Sidi M'hamed","Slim","Souamaa","Tamsa","Tarmount","Zarzour"]},
+"29":{name:"Mascara",communes:["Ain Fares","Ain Fekan","Ain Ferah","Ain Frass","Alaimia","Aouf","Benian","Bou Henni","Bouhanifia","Chorfa","El Bordj","El Gaada","El Ghomri","El Gueitena","El Hachem","El Keurt","El Mamounia","El Menaouer","Ferraguig","Froha","Gharrous","Ghriss","Guerdjoum","Hacine","Khalouia","Makhda","Maoussa","Mascara","Matemore","Mocta Douz","Mohammadia","Nesmot","Oggaz","Oued El Abtal","Oued Taria","Ras El Ain Amirouche","Sedjerara","Sehailia","Sidi Abdeldjebar","Sidi Abdelmoumene","Sidi Boussaid","Sidi Kada","Sig","Tighennif","Tizi","Zahana","Zelamta"]},
+"30":{name:"Ouargla",communes:["Ain Beida","Hassi Ben Abdellah","Hassi Messaoud","N'goussa","Ouargla","Rouissat","Sidi Khouiled"]},
+"31":{name:"Oran",communes:["Ain Biya","Ain Kerma","Ain Turk","Arzew","Ben Freha","Bethioua","Bir El Djir","Boufatis","Bousfer","Boutlelis","El Ancar","El Braya","El Kerma","Es Senia","Gdyel","Hassi Ben Okba","Hassi Bounif","Hassi Mefsoukh","Marsat El Hadjadj","Mers El Kebir","Messerghin","Oran","Oued Tlelat","Sidi Ben Yebka","Sidi Chami","Tafraoui"]},
+"32":{name:"El Bayadh",communes:["Ain El Orak","Arbaouat","Boualem","Bougtoub","Boussemghoun","Brezina","Cheguig","Chellala","El Bayadh","El Biodh Sidi Cheikh","El Bnoud","El Kheither","El Mehara","Ghassoul","Kef El Ahmar","Krakda","Rogassa","Sidi Ameur","Sidi Slimane","Sidi Tifour","Stitten","Tousmouline"]},
+"33":{name:"Illizi",communes:["Debdeb","Illizi","In Amenas","Bordj Omar Driss"]},
+"34":{name:"Bordj Bou Arreridj",communes:["Ain Taghrout","Ain Tesra","Belimour","Ben Daoud","Bir Kasdali","Bordj Bou Arreridj","Bordj Ghdir","Bordj Zemora","Colla","Djaafra","El Ach","El Achir","El Anseur","El Hamadia","El M'hir","El Main","Ghilassa","Haraza","Hasnaoua","Khelil","Ksour","Mansoura","Medjana","Ouled Brahem","Ouled Dahmane","Ouled Sidi Brahim","Rabta","Ras El Oued","Sidi Embarek","Tafreg","Taglait","Teniet En Nasr","Tesmart","Tixter"]},
+"35":{name:"Boumerdes",communes:["Afir","Ammal","Baghlia","Ben Choud","Beni Amrane","Bordj Menaiel","Boudouaou","Boudouaou El Bahri","Boumerdes","Bouzegza Keddara","Chabet El Ameur","Corso","Dellys","Djinet","El Kharrouba","Hammedi","Isser","Khemis El Khechna","Larbatache","Leghata","Naciria","Ouled Aissa","Ouled Hedadj","Ouled Moussa","Si Mustapha","Sidi Daoud","Souk El Haad","Taourga","Thenia","Tidjelabine","Timezrit","Zemmouri"]},
+"36":{name:"El Tarf",communes:["Ain El Assel","Ain Kerma","Asfour","Ben M Hidi","Berrihane","Besbes","Bougous","Boutin","Chefia","Chetaibi","Drean","Echatt","El Aioun","El Kala","El Tarf","Hammam Beni Salah","Lac des Oiseaux","Oued Zitoun","Raml Souk","Souarekh","Zerizer","Zitouna","Zitouna","Chefia"]},
+"37":{name:"Tindouf",communes:["Oum El Assel","Tindouf"]},
+"38":{name:"Tissemsilt",communes:["Ammari","Beni Chaib","Beni Lahcene","Boucaid","Bordj Bounaama","Bordj El Emir Abdelkader","Khemisti","Larbaa","Lardjem","Layoune","Maacem","Melaab","Ouled Bessem","Sidi Abed","Sidi Lantri","Sidi Slimane","Tamalaht","Theniet El Had","Tissemsilt","Youssoufia","Lazharia","Bordj El Emir Abdelkader"]},
+"39":{name:"El Oued",communes:["Bayadha","Ben Guecha","Debila","Douar El Ma","El Ogla","El Oued","Guemar","Hamraia","Hassi Khalifa","Kouinine","Magrane","Mih Ouensa","Nakhla","Ourmes","Oued El Alenda","Reguiba","Robbah","Rohba","Sidi Aoun","Still","Taghzout","Trifaoui"]},
+"40":{name:"Khenchela",communes:["Ain Touila","Babar","Baghai","Bouhmama","Chechar","Chelia","Djellal","El Hamma","El Mahmal","Ensigha","Kais","Khenchela","Khirane","M'Toussa","Ouled Rechache","Remila","Tamza","Taouzianat","Yabous","Ain Touila","Babar"]},
+"41":{name:"Souk Ahras",communes:["Ain Zana","Bir Bouhouche","Drea","Hanancha","Khedara","Khemissa","Kheddara","M'daourouch","Machroha","Mechroha","Merahna","Ouled Driss","Ouled Moumen","Ouled Zitoun","Oum El Adhaim","Sedrata","Sidi Fredj","Souk Ahras","Taoura","Terraguelt","Tiffech","Zaarouria","Zouabi","Ragouba","Hammam Tassa"]},
+"42":{name:"Tipaza",communes:["Aghbal","Ahmer El Ain","Ain Tagourait","Attatba","Beni Mileuk","Bouharoun","Bou Ismail","Chaiba","Cherchell","Damous","Damous","Douaouda","El Affroun","Fouka","Gouraya","Hadjeret Ennous","Hadjout","Hadjout","Khemisti","Kolea","Larhat","Menaceur","Messelmoun","Merad","Nador","Sidi Amar","Sidi Ghiles","Tipaza"]},
+"43":{name:"Mila",communes:["Ahmed Rachedi","Ain Beida Harriche","Ain Mellouk","Ain Tine","Boudrousse","Chelghoum Laid","Chigara","Derrahi Bousselah","Elayadi Barbes","Ferdjioua","Grarem Gouga","Hamala","Mila","Minar Zarza","Oued Athmania","Oued Endja","Oued Seguen","Rouached","Sidi Khelifa","Sidi Merouane","Tadjenanet","Tassadane Haddada","Teleghma","Terrai Bainen","Tiberguent","Yahia Beni Guecha","Zeghaia","Benyahia Abderrahmane","Bouhatem","Ain Tine","Chelghoum Laid"]},
+"44":{name:"Ain Defla",communes:["Ain Benian","Ain Bouyahia","Ain Defla","Ain Lechiakh","Ain Soltane","Ain Torki","Arib","Bathia","Belaas","Bir Ould Khelifa","Bordj Emir Khaled","Boumedfaa","Bourached","Djelida","Djemaa Ouled Cheikh","Djendel","El Abadia","El Amra","El Attaf","El Hassania","El Maine","Hammam Righa","Hoceinia","Khemis Miliana","Lahlef","Mekhatria","Miliana","Oued Chorfa","Oued Djemaa","Rouina","Sidi Lakhdar","Tacheta Zougagha","Tarik Ibn Ziad","Tiberkanine","Tibouanine","Zeddine"]},
+"45":{name:"Naama",communes:["Ain Ben Khelil","Ain Sefra","Asla","Djenien Bourezg","El Biod","Kasdir","Moghrar","Naama","Sfissifa","Tiout","Mechria","Mekmen Ben Amar"]},
+"46":{name:"Ain Temouchent",communes:["Aghlal","Ain El Arbaa","Ain Kihal","Ain Temouchent","Ain Tolba","Ain Larbaa","Aoubellil","Beni Saf","Bouzedjar","Chaabat El Leham","Chentouf","El Amria","El Emir Abdelkader","El Malah","El Maleh","Hammam Bou Hadjar","Hassi El Ghella","Oulhaça Gheraba","Ouled Boudjemaa","Ouled Kihal","Ouled Mimoun","Oued Berkeche","Ramdess","Sidi Ben Adda","Sidi Boumediene","Sidi Safi","Tamzoura","Terga"]},
+"47":{name:"Ghardaia",communes:["Berriane","Bounoura","Dhayet Bendhahoua","El Atteuf","Ghardaia","Guerrara","Metlili","Sebseb","Zelfana","Mansoura"]},
+"48":{name:"Relizane",communes:["Ain Rahma","Ain Tarek","Ammi Moussa","Belassel Bouzegza","Belaassel Bouzegza","Bendaoud","Beni Dergoun","Beni Zentis","Dar Ben Abdellah","Djidiouia","El Guettar","El Hamadna","El Hassi","El Matmar","El Ouldja","El Oued","Had Echkalla","Hamri","Kalaa","Lahlef","Mazouna","Mendes","Merdja Sidi Abed","Oued Rhiou","Ouled Aiche","Ouled Sidi Mihoub","Ramka","Relizane","Sidi Khettab","Sidi Lazreg","Sidi M'Hamed Ben Ali","Sidi M'Hamed Benaouda","Sidi Saada","Souk El Had","Yellel","Zemmoura","Mediouna","Ouarizane"]},
+"49":{name:"Timimoun",communes:["Aougrout","Charouine","Deldoul","Ksar Kaddour","Ouled Said","Talmine","Timimoun","Tinerkouk","Tonzout","Ain Bel"]},
+"50":{name:"Bordj Badji Mokhtar",communes:["Bordj Badji Mokhtar","Timiaouine"]},
+"51":{name:"Ouled Djellal",communes:["Besbes","Doucen","Ouled Djellal","Ras El Miaad","Sidi Khaled","Chaiba"]},
+"52":{name:"Beni Abbes",communes:["Beni Abbes","El Ouata","Igli","Kerzaz","Ksabi","Ouled Khoudir","Tamtert","Tabalbala","Timoudi","Beni Ikhlef"]},
+"53":{name:"In Salah",communes:["In Ghar","Foggaret Ezzaouia","In Salah"]},
+"54":{name:"In Guezzam",communes:["In Guezzam","Tin Zaouatine"]},
+"55":{name:"Touggourt",communes:["Blidet Amor","El Hadjira","El Alia","Megarine","Nezla","Taibet","Tebesbest","Temacine","Touggourt","Zaouia El Abidia","Sidi Slimane","Benaceur","Megarine"]},
+"56":{name:"Djanet",communes:["Djanet","Bordj El Haouas"]},
+"57":{name:"El M'ghair",communes:["Djamaa","El M'ghair","M'Rara","Oum Touyour","Sidi Amrane","Still","Sidi Khelil","Hamraia"]},
+"58":{name:"El Meniaa",communes:["El Meniaa","Hassi Gara","Hassi Fehal"]}
+};
+
+const CSS=`
+#custom-order-root,#custom-order-root *{box-sizing:border-box}
+#custom-order-root{width:100%;direction:rtl;font-family:inherit}
+.custom-order-form{width:100%;border:1px solid #d9d9d9;border-radius:4px;padding:20px 15px 16px;margin:0;background:#fff;direction:rtl}
+.custom-order-title{text-align:center;font-size:15px;font-weight:500;color:#222;line-height:1.7;margin:0 0 18px}
+.custom-order-fields{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.custom-order-input,.custom-order-select{width:100%;height:50px;border:1px solid #d9d9d9;border-radius:3px;background:#fff;color:#222;font-family:inherit;font-size:14px;outline:none;padding:0 13px;direction:rtl}
+.custom-order-input::placeholder{color:#b7b7b7;opacity:1}
+.custom-order-input:focus,.custom-order-select:focus{border-color:#999}
+.custom-order-select{cursor:pointer}
+.custom-order-select:disabled{background:#f7f7f7;color:#999;cursor:not-allowed}
+.custom-order-error{display:none;color:#d32f2f;font-size:12px;text-align:right;margin-top:6px;line-height:1.5}
+.custom-order-offers{margin-top:18px}
+.custom-order-offer{display:flex;align-items:center;gap:10px;min-height:28px;cursor:pointer;user-select:none}
+.custom-order-offer+.custom-order-offer{margin-top:17px}
+.custom-order-radio{width:27px;height:27px;min-width:27px;border:1px solid #d6d6d6;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#fff}
+.custom-order-radio.active:after{content:'';display:block;width:15px;height:15px;border-radius:50%;background:#000}
+.custom-order-offer-text{flex:1;text-align:right;color:#222;font-size:15px;font-weight:700;line-height:1.5}
+.custom-order-bottom{margin-top:18px;display:flex;align-items:center;gap:14px;direction:rtl}
+.custom-order-quantity{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.custom-order-quantity button{min-width:31px;width:31px;height:31px;border:1px solid #ddd;color:#222;background:#fff;border-radius:2px;padding:0;font-family:inherit;font-size:20px;line-height:1;cursor:pointer}
+.custom-order-quantity button:hover{background:#fafafa}
+.custom-order-quantity-value{min-width:18px;text-align:center;color:#222;font-size:16px;font-weight:700}
+.custom-order-submit{flex:1;min-width:0;min-height:47px;margin:0;padding:0 15px;border:0;border-radius:0;color:#fff;background:#000;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer}
+.custom-order-submit:hover{background:#111}
+.custom-order-submit:disabled{background:#000;color:#fff;opacity:.65;cursor:not-allowed}
+.custom-order-success,.custom-order-unavailable,.custom-order-fake{width:100%;margin:50px 0;text-align:center;color:#222;font-size:32px;line-height:1.7}
+.custom-order-success span,.custom-order-unavailable span,.custom-order-fake span{display:block}
+@media(max-width:600px){
+.custom-order-form{padding:20px 15px 16px}
+.custom-order-title{font-size:14px}
+.custom-order-fields{grid-template-columns:1fr}
+.custom-order-offer-text{font-size:15px}
+.custom-order-bottom{gap:10px}
+.custom-order-submit{font-size:15px}
+.custom-order-success,.custom-order-unavailable,.custom-order-fake{font-size:24px}
+}
+`;
+
+function addStyles(){
+if(document.getElementById('custom-order-style'))return;
+const style=document.createElement('style');
+style.id='custom-order-style';
+style.textContent=CSS;
+document.head.appendChild(style);
+}
+
+function escapeHtml(value){
+return String(value).replace(/[&<>"']/g,function(char){
+return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char];
+});
+}
+
+function getWilayaOptions(){
+return Object.keys(WILAYAS).sort(function(a,b){return Number(a)-Number(b)}).map(function(id){
+return '<option value="'+escapeHtml(WILAYAS[id].name)+'">'+String(id).padStart(2,'0')+' - '+escapeHtml(WILAYAS[id].name)+'</option>';
+}).join('');
+}
+
+function createForm(){
+const wrapper=document.createElement('div');
+
+wrapper.innerHTML=`
+<form class="custom-order-form">
+<div class="custom-order-title">
+للطلب أدخل معلوماتك في الخانات أسفله ⬇⬇ ثم إضغط على " إضغط هنا للطلب "
+</div>
+
+<div class="custom-order-fields">
+
+<input
+class="custom-order-input"
+name="name"
+type="text"
+placeholder="الاسم الأول"
+aria-label="الاسم الأول"
+required
+>
+
+<input
+class="custom-order-input"
+name="phone"
+type="tel"
+inputmode="numeric"
+maxlength="10"
+placeholder="رقم الهاتف"
+aria-label="رقم الهاتف"
+required
+>
+
+<select
+class="custom-order-select"
+name="wilaya"
+aria-label="الولاية"
+required
+>
+<option value="">اختر الولاية</option>
+${getWilayaOptions()}
+</select>
+
+<select
+class="custom-order-select"
+name="commune"
+aria-label="البلدية"
+required
+disabled
+>
+<option value="">اختر البلدية</option>
+</select>
+
+</div>
+
+<div class="custom-order-error custom-phone-error">
+أدخل رقم هاتف صحيح
+</div>
+
+<div class="custom-order-error custom-submit-error"></div>
+
+<div class="custom-order-offers">
+
+<div class="custom-order-offer custom-offer-single">
+<div class="custom-order-radio active"></div>
+<div class="custom-order-offer-text">
+عند طلب علبة 01&nbsp;&nbsp;<span class="single-price"></span> دج
+</div>
+</div>
+
+<div class="custom-order-offer custom-offer-bundle">
+<div class="custom-order-radio"></div>
+<div class="custom-order-offer-text">
+عند طلب 02 + واحدة مجانًا&nbsp;&nbsp;<span class="bundle-price"></span> دج
+</div>
+</div>
+
+</div>
+
+<div class="custom-order-bottom">
+
+<div class="custom-order-quantity">
+
+<button type="button" class="custom-minus">−</button>
+
+<div class="custom-order-quantity-value">1</div>
+
+<button type="button" class="custom-plus">+</button>
+
+</div>
+
+<button
+type="submit"
+class="custom-order-submit"
+disabled
+>
+إضغط هنا للطلب
+</button>
+
+</div>
+
+</form>
+`;
+
+return wrapper.firstElementChild;
+}
+
+function fillCommunes(form,wilaya){
+const communeSelect=form.querySelector('[name="commune"]');
+
+communeSelect.innerHTML='<option value="">اختر البلدية</option>';
+
+const selected=Object.values(WILAYAS).find(function(item){
+return item.name===wilaya;
+});
+
+if(!selected){
+communeSelect.disabled=true;
+return;
+}
+
+selected.communes.forEach(function(commune){
+const option=document.createElement('option');
+option.value=commune;
+option.textContent=commune;
+communeSelect.appendChild(option);
+});
+
+communeSelect.disabled=false;
+}
+
+function validateForm(form){
+const name=form.querySelector('[name="name"]').value.trim();
+const phone=form.querySelector('[name="phone"]').value.replace(/\s+/g,'');
+const wilaya=form.querySelector('[name="wilaya"]').value;
+const commune=form.querySelector('[name="commune"]').value;
+
+const validPhone=/^0[5-7]\d{8}$/.test(phone);
+
+const phoneError=form.querySelector('.custom-phone-error');
+phoneError.style.display=phone&&!validPhone?'block':'none';
+
+const submit=form.querySelector('.custom-order-submit');
+submit.disabled=!validPhone||!name||!wilaya||!commune;
+
+return {
+name:name,
+phone:phone,
+wilaya:wilaya,
+commune:commune,
+validPhone:validPhone
+};
+}
+
+function showSuccess(container){
+container.innerHTML=`
+<div class="custom-order-success">
+<span>لقد تم تقديم طلبك بنجاح سيتم الاتصال بك قريبا لتأكيد طلبيتك</span>
+<span>شكرا لك</span>
+</div>
+`;
+
+window.scrollTo({
+top:500,
+behavior:'smooth'
+});
+}
+
+function showUnavailable(container){
+container.innerHTML=`
+<div class="custom-order-unavailable">
+<span>نعتدر التوصيل غير متوفر لولايتكم</span>
+<span>شكرا لكم</span>
+</div>
+`;
+}
+
+function showFake(container,wilaya){
+container.innerHTML=`
+<div class="custom-order-fake">
+<span>غير متوفر الآن ${escapeHtml(wilaya||'')} التوصيل لولايتك</span>
+<span>نرجوا المعذرة و شكرا</span>
+</div>
+`;
+}
+
+function setupForm(container,form){
+
+let quantity=1;
+let selectedOffer='single';
+
+const nameInput=form.querySelector('[name="name"]');
+const phoneInput=form.querySelector('[name="phone"]');
+const wilayaSelect=form.querySelector('[name="wilaya"]');
+const communeSelect=form.querySelector('[name="commune"]');
+
+const quantityValue=form.querySelector('.custom-order-quantity-value');
+
+const minusButton=form.querySelector('.custom-minus');
+const plusButton=form.querySelector('.custom-plus');
+
+const singleOffer=form.querySelector('.custom-offer-single');
+const bundleOffer=form.querySelector('.custom-offer-bundle');
+
+const submitButton=form.querySelector('.custom-order-submit');
+
+const singleRadio=singleOffer.querySelector('.custom-order-radio');
+const bundleRadio=bundleOffer.querySelector('.custom-order-radio');
+
+const submitError=form.querySelector('.custom-submit-error');
+
+const price=Number(CONFIG.productPrice)||0;
+
+form.querySelector('.single-price').textContent=price;
+form.querySelector('.bundle-price').textContent=price*2;
+
+function refresh(){
+validateForm(form);
+}
+
+nameInput.addEventListener('input',refresh);
+phoneInput.addEventListener('input',refresh);
+
+wilayaSelect.addEventListener('change',function(){
+fillCommunes(form,wilayaSelect.value);
+refresh();
+});
+
+communeSelect.addEventListener('change',refresh);
+
+minusButton.addEventListener('click',function(){
+quantity=Math.max(1,quantity-1);
+quantityValue.textContent=quantity;
+});
+
+plusButton.addEventListener('click',function(){
+quantity+=1;
+quantityValue.textContent=quantity;
+});
+
+singleOffer.addEventListener('click',function(){
+selectedOffer='single';
+singleRadio.classList.add('active');
+bundleRadio.classList.remove('active');
+quantity=1;
+quantityValue.textContent='1';
+});
+
+bundleOffer.addEventListener('click',function(){
+selectedOffer='bundle';
+bundleRadio.classList.add('active');
+singleRadio.classList.remove('active');
+quantity=1;
+quantityValue.textContent='1';
+});
+
+form.addEventListener('submit',async function(event){
+
+event.preventDefault();
+
+const values=validateForm(form);
+
+if(!values.validPhone){
+phoneInput.focus();
+return;
+}
+
+if(!values.name||!values.wilaya||!values.commune){
+return;
+}
+
+submitButton.disabled=true;
+submitError.style.display='none';
+submitError.textContent='';
+
+const orderQty=Math.max(1,Number(quantity)||1);
+
+const productQty=
+selectedOffer==='bundle'
+?orderQty*3
+:orderQty;
+
+const productsPrice=
+selectedOffer==='bundle'
+?price*2*orderQty
+:price*orderQty;
+
+const deliveryPrice=Number(CONFIG.deliveryPrice)||0;
+
+const totalPrice=productsPrice+deliveryPrice;
+
+const now=new Date();
+
+const formData=new FormData();
+
+formData.append(
+'date',
+`${now.getDate()}/${now.getMonth()+1} - ${now.getHours()}H : ${now.getMinutes()}M`
+);
+
+formData.append(
+'product',
+CONFIG.productName||''
+);
+
+formData.append(
+'name',
+values.name
+);
+
+formData.append(
+'phone',
+values.phone
+);
+
+formData.append(
+'wilaya',
+values.wilaya
+);
+
+formData.append(
+'commune',
+values.commune
+);
+
+formData.append(
+'quantity',
+String(productQty)
+);
+
+formData.append(
+'offer',
+selectedOffer==='bundle'
+?'02 + 01 مجاناً'
+:'01'
+);
+
+formData.append(
+'prix',
+String(totalPrice)
+);
+
+try{
+
+if(!CONFIG.orderUrl){
+throw new Error('Missing order endpoint');
+}
+
+const response=await fetch(
+CONFIG.orderUrl,
+{
+method:'POST',
+body:formData
+}
+);
+
+if(!response.ok){
+throw new Error('Order request failed');
+}
+
+showSuccess(container);
+
+}catch(error){
+
+console.error(error);
+
+submitButton.disabled=false;
+
+submitError.textContent=
+'تعذر إرسال الطلب. يرجى المحاولة مرة أخرى.';
+
+submitError.style.display='block';
+}
+
+});
+
+refresh();
+
+if(CONFIG.deliveryUnavailable){
+showUnavailable(container);
+return;
+}
+
+if(CONFIG.fakeBtn){
+showFake(container,'');
+}
+}
+
+function replaceOriginalForm(){
+
+document.querySelectorAll('.product_form_checkout').forEach(function(container){
+
+if(container.querySelector('.custom-order-form')){
+return;
+}
+
+const originalForm=
+container.querySelector('form:not(.custom-order-form)');
+
+if(!originalForm){
+return;
+}
+
+originalForm.style.setProperty(
+'display',
+'none',
+'important'
+);
+
+const newForm=createForm();
+
+container.insertBefore(newForm,originalForm);
+
+setupForm(container,newForm);
+
+});
+
+}
+
+function init(){
+
+addStyles();
+
+replaceOriginalForm();
+
+const observer=new MutationObserver(function(){
+replaceOriginalForm();
+});
+
+observer.observe(
+document.documentElement,
+{
+childList:true,
+subtree:true
+});
+
+}
+
+if(document.readyState==='loading'){
+document.addEventListener('DOMContentLoaded',init);
+}else{
+init();
+}
+
+})();
+</script>
+*/
