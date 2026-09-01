@@ -1809,6 +1809,10 @@ export default function Form({ id }) {
   const [correctNumber, setCorrectNumber] = useState(false);
   const [isDelevery /*setIsDelevery*/] = useState(false);
   const [submitError, setSubmitError] = useState("");
+
+  // جديد: حالة منع الطلب لمدة 24 ساعة
+  const [orderCooldown, setOrderCooldown] = useState(false);
+
   //const [delevry, setDelevery] = useState(0);
   const phoneInput = useRef(null);
   //nothing
@@ -1839,72 +1843,138 @@ export default function Form({ id }) {
     setBtnDisebled(!validPhone || !name.trim() || !wilaya || !commune);
   }, [phone, name, wilaya, commune]);
 
+  // جديد: التحقق من آخر طلب عند فتح الصفحة
+  useEffect(() => {
+    const lastOrderTime = localStorage.getItem("lastOrderTime");
+
+    if (!lastOrderTime) {
+      return;
+    }
+
+    const twentyFourHours = 24 * 60 * 60 * 1000;
+    const currentTime = Date.now();
+    const elapsedTime = currentTime - Number(lastOrderTime);
+
+    if (elapsedTime < twentyFourHours) {
+      setOrderCooldown(true);
+
+      const remainingTime = twentyFourHours - elapsedTime;
+
+      const timeout = setTimeout(() => {
+        localStorage.removeItem("lastOrderTime");
+        setOrderCooldown(false);
+        setSubmitError("");
+      }, remainingTime);
+
+      return () => clearTimeout(timeout);
+    } else {
+      localStorage.removeItem("lastOrderTime");
+      setOrderCooldown(false);
+    }
+  }, []);
+
   const handleSubmitOrder = async (e) => {
     e.preventDefault();
+
+    // جديد: منع إرسال طلب آخر قبل مرور 24 ساعة
+    const lastOrderTime = localStorage.getItem("lastOrderTime");
+    const twentyFourHours = 24 * 60 * 60 * 1000;
+
+    if (lastOrderTime && Date.now() - Number(lastOrderTime) < twentyFourHours) {
+      setOrderCooldown(true);
+      setSubmitError(
+        "لقد قمت بالفعل بإرسال طلب. يمكنك إرسال طلب جديد بعد مرور 24 ساعة.",
+      );
+      return;
+    }
 
     setBtnDisebled(true);
 
     try {
       const data = new FormData();
+
       data.append(
         "date",
         `${new Date().getDate()}/${
           new Date().getMonth() + 1
         } - ${new Date().getHours()}H : ${new Date().getMinutes()}M`,
       );
+
       //data.append("product", product.name || "");
       data.append("product", "créme psoriasis");
+
       data.append("name", name);
+
       const normalizedPhone = phone.replace(/\s+/g, "");
+
       if (!/^0[5-7]\d{8}$/.test(normalizedPhone)) {
         setCorrectNumber(true);
         phoneInput.current?.focus();
         setBtnDisebled(true);
         return;
       }
+
       if (!name.trim() || !wilaya || !commune) return;
+
       data.append("phone", normalizedPhone);
       data.append("wilaya", wilaya);
       data.append("commune", commune);
+
       //data.append("adress", adress);
       // data.append("model", "منتج بدون مقاس أو لون");
+
       const orderQty = Math.max(1, Number(quantity) || 1);
+
       const productQty = selectedOffer === "bundle" ? orderQty * 3 : orderQty;
+
       const productsPrice =
         selectedOffer === "bundle"
           ? Number(price) * 2 * orderQty
           : Number(price) * orderQty;
+
       const deliveryPrice =
         delevery.trim() !== "" && !isNaN(Number(delevery))
           ? Number(delevery)
           : 0;
 
       data.append("quantity", productQty.toString());
+
       data.append(
         "offer",
         selectedOffer === "bundle" ? "02 + 01 مجاناً" : "01",
       );
+
       data.append("prix", `${productsPrice + deliveryPrice}`);
 
       if (!url) throw new Error("Missing order endpoint");
+
       const response = await fetch(url, {
         method: "POST",
         body: data,
       });
+
       if (!response.ok)
         throw new Error(`Order request failed (${response.status})`);
+
+      // جديد: تخزين وقت الطلب فقط بعد نجاح الإرسال
+      localStorage.setItem("lastOrderTime", Date.now().toString());
+
+      setOrderCooldown(true);
 
       setBtnDisebled(false);
       setSubmitError("");
 
       setPurchaise(true);
+
       window.scrollTo({
         top: 500,
         behavior: "smooth", // Smooth scrolling animation
       });
     } catch (error) {
       console.error(error);
+
       setBtnDisebled(false);
+
       setSubmitError("تعذر إرسال الطلب. يرجى المحاولة مرة أخرى.");
     }
   };
@@ -1916,6 +1986,7 @@ export default function Form({ id }) {
           <Typography sx={{ fontSize: "32px", textAlign: "center" }}>
             نعتدر التوصيل غير متوفر لولايتكم
           </Typography>
+
           <Typography sx={{ fontSize: "32px", textAlign: "center" }}>
             شكرا لكم
           </Typography>
@@ -1927,6 +1998,7 @@ export default function Form({ id }) {
               <Typography sx={{ fontSize: "32px", textAlign: "center" }}>
                 لقد تم تقديم طلبك بنجاح سيتم الاتصال بك قريبا لتأكيد طلبيتك
               </Typography>
+
               <Typography sx={{ fontSize: "32px", textAlign: "center" }}>
                 شكرا لك
               </Typography>
@@ -1936,6 +2008,7 @@ export default function Form({ id }) {
               <Typography sx={{ fontSize: "32px", textAlign: "center" }}>
                 {` غير متوفر الآن ${wilaya}  التوصيل لولايتك `}
               </Typography>
+
               <Typography sx={{ fontSize: "32px", textAlign: "center" }}>
                 نرجوا المعذرة و شكرا
               </Typography>
@@ -2034,6 +2107,7 @@ export default function Form({ id }) {
                     }}
                   >
                     <option value="">اختر الولاية</option>
+
                     {wilayaInfo.slice(1).map((item) => (
                       <option key={item.id} value={item.name}>
                         {item.id} - {item.name}
@@ -2050,6 +2124,7 @@ export default function Form({ id }) {
                     onChange={(e) => setCommune(e.target.value)}
                   >
                     <option value="">اختر البلدية</option>
+
                     {communes.map((item) => (
                       <option key={item} value={item}>
                         {item}
@@ -2082,6 +2157,21 @@ export default function Form({ id }) {
                     }}
                   >
                     {submitError}
+                  </Typography>
+                )}
+
+                {orderCooldown && (
+                  <Typography
+                    sx={{
+                      color: "#d32f2f",
+                      fontSize: "13px",
+                      textAlign: "center",
+                      marginTop: "10px",
+                      fontWeight: 600,
+                    }}
+                  >
+                    لقد قمت بالفعل بإرسال طلب. يمكنك إرسال طلب جديد بعد مرور 24
+                    ساعة.
                   </Typography>
                 )}
 
@@ -2136,6 +2226,7 @@ export default function Form({ id }) {
                         />
                       )}
                     </Box>
+
                     <Typography
                       sx={{
                         fontSize: "15px",
@@ -2197,6 +2288,7 @@ export default function Form({ id }) {
                         />
                       )}
                     </Box>
+
                     <Typography
                       sx={{
                         fontSize: "15px",
@@ -2253,6 +2345,7 @@ export default function Form({ id }) {
                     >
                       −
                     </Button>
+
                     <Typography
                       sx={{
                         minWidth: "18px",
@@ -2263,6 +2356,7 @@ export default function Form({ id }) {
                     >
                       {quantity}
                     </Typography>
+
                     <Button
                       type="button"
                       onClick={() => setQuantity((q) => String(Number(q) + 1))}
@@ -2289,7 +2383,7 @@ export default function Form({ id }) {
                   </Box>
 
                   <Button
-                    disabled={btnDisebled}
+                    disabled={btnDisebled || orderCooldown}
                     variant="contained"
                     type="submit"
                     sx={{
