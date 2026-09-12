@@ -2,7 +2,6 @@ import { Box, Button, Chip, Paper, Typography } from "@mui/material";
 import { ShoppingCart } from "@mui/icons-material";
 import Form from "./components/Form";
 import { data } from "./data";
-import img from "./img.json";
 import { useEffect, useState } from "react";
 
 export default function Page17() {
@@ -27,7 +26,7 @@ export default function Page17() {
         <Box className="visual">
           <Chip label="الأكثر طلباً" className="badge" />
           <img
-            src={img.thumnali || product.themImg}
+            src={product.themImg}
             alt={product.name}
             fetchPriority="high"
             decoding="async"
@@ -61,7 +60,7 @@ export default function Page17() {
         <Box className="description">
           <Typography variant="h2">لماذا كريم الصدفية من TOVA؟</Typography>
           <img
-            src={img.desc || product.descImag1}
+            src={product.descImag1}
             alt="تفاصيل المنتج"
             loading="lazy"
             decoding="async"
