@@ -8,8 +8,14 @@ export default function Page17() {
   const product = data.find((item) => item.id === "l-17");
   const [showBtn, setShowBtn] = useState(false);
   useEffect(() => {
-    const onScroll = () => setShowBtn(window.scrollY > 500);
-    window.addEventListener("scroll", onScroll);
+    const onScroll = () => {
+      const nextShowBtn = window.scrollY > 500;
+
+      setShowBtn((prev) => (prev === nextShowBtn ? prev : nextShowBtn));
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   const goToForm = () =>

@@ -3,10 +3,9 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Box, Typography, TextField, Button } from "@mui/material";
 import { data } from "../data.js";
 
-export default function Form({ id }) {
+function Form({ id }) {
   const [wilayaCommuneInfo, setWilayaCommuneInfo] = useState([]);
 
-  const [btnDisebled, setBtnDisebled] = useState(true);
   const [purchaise, setPurchaise] = useState(false);
 
   const [name, setName] = useState("");
@@ -19,7 +18,6 @@ export default function Form({ id }) {
 
   const fakeBtn = false;
 
-  const [correctNumber, setCorrectNumber] = useState(false);
   const [isDelevery] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [orderCooldown, setOrderCooldown] = useState(false);
@@ -70,14 +68,11 @@ export default function Form({ id }) {
       .filter(Boolean);
   }, [wilayaCommuneInfo, wilaya]);
 
-  useEffect(() => {
-    const normalizedPhone = phone.replace(/\s+/g, "");
-
-    const validPhone = /^0[5-7]\d{8}$/.test(normalizedPhone);
-
-    setCorrectNumber(Boolean(normalizedPhone) && !validPhone);
-    setBtnDisebled(!validPhone || !name.trim() || !wilaya || !commune);
-  }, [phone, name, wilaya, commune]);
+  const normalizedPhone = phone.replace(/\s+/g, "");
+  const validPhone = /^0[5-7]\d{8}$/.test(normalizedPhone);
+  const correctNumber = Boolean(normalizedPhone) && !validPhone;
+  const isFormValid =
+    validPhone && Boolean(name.trim()) && Boolean(wilaya) && Boolean(commune);
 
   useEffect(() => {
     const lastOrderTime = localStorage.getItem("lastOrderTime");
@@ -109,24 +104,19 @@ export default function Form({ id }) {
     setOrderCooldown(false);
   }, []);
 
-  const fireTikTokPurchaseOnce = (orderId, value, quantityValue) => {
+  const firePurchaseOnce = (orderId, value, quantityValue) => {
     if (!orderId || typeof window === "undefined") return false;
 
-    const storageKey = `tiktok_purchase_sent_${orderId}`;
+    const storageKey = `purchase_sent_${orderId}`;
     let alreadySent = false;
 
     try {
       alreadySent = localStorage.getItem(storageKey) === "1";
     } catch (storageError) {
-      console.warn("TikTok dedup storage unavailable:", storageError);
+      console.warn("Purchase dedup storage unavailable:", storageError);
     }
 
     if (alreadySent) {
-      return false;
-    }
-
-    if (!window.ttq || typeof window.ttq.track !== "function") {
-      console.warn("TikTok Pixel ttq is not available.");
       return false;
     }
 
@@ -136,25 +126,46 @@ export default function Form({ id }) {
     try {
       localStorage.setItem(storageKey, "1");
     } catch (storageError) {
-      console.warn("Could not save TikTok Purchase dedup key:", storageError);
+      console.warn("Could not save Purchase dedup key:", storageError);
     }
 
-    try {
-      window.ttq.track("CompletePayment", {
-        event_id: orderId,
-        value: numericValue,
-        currency: "DZD",
-        quantity: numericQuantity,
-        content_type: "product",
-        content_id: String(id ?? ""),
-        content_name: "créme psoriasis",
-      });
-
-      return true;
-    } catch (trackingError) {
-      console.warn("TikTok Purchase tracking failed:", trackingError);
-      return false;
+    if (typeof window.fbq === "function") {
+      try {
+        window.fbq(
+          "track",
+          "Purchase",
+          {
+            value: numericValue,
+            currency: "DZD",
+            content_type: "product",
+            content_ids: [String(id ?? "")],
+            content_name: "créme psoriasis",
+            num_items: numericQuantity,
+          },
+          { eventID: orderId },
+        );
+      } catch (trackingError) {
+        console.warn("Meta Purchase tracking failed:", trackingError);
+      }
     }
+
+    if (window.ttq && typeof window.ttq.track === "function") {
+      try {
+        window.ttq.track("CompletePayment", {
+          event_id: orderId,
+          value: numericValue,
+          currency: "DZD",
+          quantity: numericQuantity,
+          content_type: "product",
+          content_id: String(id ?? ""),
+          content_name: "créme psoriasis",
+        });
+      } catch (trackingError) {
+        console.warn("TikTok Purchase tracking failed:", trackingError);
+      }
+    }
+
+    return true;
   };
 
   const handleSubmitOrder = async (e) => {
@@ -177,12 +188,7 @@ export default function Form({ id }) {
       return;
     }
 
-    const normalizedPhone = phone.replace(/\s+/g, "");
-
-    const validPhone = /^0[5-7]\d{8}$/.test(normalizedPhone);
-
     if (!validPhone) {
-      setCorrectNumber(true);
       phoneInput.current?.focus();
       return;
     }
@@ -199,7 +205,6 @@ export default function Form({ id }) {
     isSubmittingRef.current = true;
 
     setIsSubmitting(true);
-    setBtnDisebled(true);
     setSubmitError("");
 
     const orderId =
@@ -258,7 +263,7 @@ export default function Form({ id }) {
 
       const finalOrderValue = productsPrice + deliveryPrice;
 
-      fireTikTokPurchaseOnce(orderId, finalOrderValue, productQty);
+      firePurchaseOnce(orderId, finalOrderValue, productQty);
 
       localStorage.setItem("lastOrderTime", Date.now().toString());
 
@@ -278,7 +283,6 @@ export default function Form({ id }) {
       isSubmittingRef.current = false;
 
       setIsSubmitting(false);
-      setBtnDisebled(false);
 
       setSubmitError("تعذر إرسال الطلب. يرجى المحاولة مرة أخرى.");
     }
@@ -710,7 +714,7 @@ export default function Form({ id }) {
                   </Box>
 
                   <Button
-                    disabled={btnDisebled || orderCooldown || isSubmitting}
+                    disabled={!isFormValid || orderCooldown || isSubmitting}
                     variant="contained"
                     type="submit"
                     sx={{
@@ -749,3 +753,5 @@ export default function Form({ id }) {
     </Box>
   );
 }
+
+export default React.memo(Form);
