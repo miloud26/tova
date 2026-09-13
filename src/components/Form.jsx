@@ -19,29 +19,11 @@ const ORDER_REJECTED_MARKERS = [
   "unable to open the file",
 ];
 
-// An explicit machine-readable outcome (recommended endpoint contract:
-// {"success":true} / {"success":false,"error":"..."}) always wins when the
-// endpoint provides one. This branch stays idle for endpoints that answer with
-// plain text or with nothing at all, so existing behaviour is unchanged.
-const ORDER_FAILURE_VALUES = new Set([
-  "false",
-  "0",
-  "error",
-  "failed",
-  "failure",
-  "ko",
-  "nok",
-]);
-
-const isExplicitFailure = (value) => {
-  if (value === false || value === 0) return true;
-
-  if (typeof value !== "string") return false;
-
-  return ORDER_FAILURE_VALUES.has(value.trim().toLowerCase());
-};
-
-const hasExplicitFailure = (body) => {
+// The order is confirmed ONLY by the machine-readable confirmation the Apps
+// Script returns after sheet.appendRow() succeeded: {"success":true}.
+// Invalid JSON, an HTML rejection page, an empty body, {"success":false} or any
+// other shape is "not saved" and must never authorize a conversion.
+const confirmsOrderSaved = (body) => {
   let payload;
 
   try {
@@ -54,13 +36,7 @@ const hasExplicitFailure = (body) => {
     return false;
   }
 
-  return [
-    payload.success,
-    payload.ok,
-    payload.saved,
-    payload.status,
-    payload.result,
-  ].some(isExplicitFailure);
+  return payload.success === true;
 };
 
 const orderWasSaved = async (response) => {
@@ -81,8 +57,8 @@ const orderWasSaved = async (response) => {
     return false;
   }
 
-  // Explicit rejection from the order endpoint itself.
-  return !hasExplicitFailure(body);
+  // Authoritative rule: only {"success":true} authorizes the conversion.
+  return confirmsOrderSaved(body);
 };
 
 // Kept in memory for the current session so an order can never be counted twice
