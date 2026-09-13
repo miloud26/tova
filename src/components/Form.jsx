@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import { Box, Typography, TextField, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { data } from "../data.js";
+import { confirmOrder } from "../confirmedOrder.js";
 
 // Google Apps Script always answers with HTTP 200, even when the request was
 // rejected (unknown function, thrown exception, missing permission, ...).
@@ -22,7 +24,7 @@ const ORDER_REJECTED_MARKERS = [
 // The order is confirmed ONLY by the machine-readable confirmation the Apps
 // Script returns after sheet.appendRow() succeeded: {"success":true}.
 // Invalid JSON, an HTML rejection page, an empty body, {"success":false} or any
-// other shape is "not saved" and must never authorize a conversion.
+// other shape is "not saved" and must never be treated as a real order.
 const confirmsOrderSaved = (body) => {
   let payload;
 
@@ -57,19 +59,12 @@ const orderWasSaved = async (response) => {
     return false;
   }
 
-  // Authoritative rule: only {"success":true} authorizes the conversion.
+  // Authoritative rule: only {"success":true} authorizes a confirmed order.
   return confirmsOrderSaved(body);
 };
 
-// Kept in memory for the current session so an order can never be counted twice
-// even when browser storage is unavailable. Keyed by the order id, so it never
-// blocks a future customer or a new order.
-const sentPurchaseOrderIds = new Set();
-
 function Form({ id }) {
   const [wilayaCommuneInfo, setWilayaCommuneInfo] = useState([]);
-
-  const [purchaise, setPurchaise] = useState(false);
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -88,6 +83,7 @@ function Form({ id }) {
 
   const phoneInput = useRef(null);
   const isSubmittingRef = useRef(false);
+  const navigate = useNavigate();
 
   const product = data.find((item) => item.id === id) || data[0] || {};
 
@@ -166,76 +162,6 @@ function Form({ id }) {
 
     setOrderCooldown(false);
   }, []);
-
-  const firePurchaseOnce = (orderId, value, quantityValue) => {
-    if (!orderId || typeof window === "undefined") return false;
-
-    if (sentPurchaseOrderIds.has(orderId)) {
-      return false;
-    }
-
-    const storageKey = `purchase_sent_${orderId}`;
-    let alreadySent = false;
-
-    try {
-      alreadySent = localStorage.getItem(storageKey) === "1";
-    } catch (storageError) {
-      console.warn("Purchase dedup storage unavailable:", storageError);
-    }
-
-    if (alreadySent) {
-      return false;
-    }
-
-    sentPurchaseOrderIds.add(orderId);
-
-    const numericValue = Number(value) || 0;
-    const numericQuantity = Math.max(1, Number(quantityValue) || 1);
-
-    try {
-      localStorage.setItem(storageKey, "1");
-    } catch (storageError) {
-      console.warn("Could not save Purchase dedup key:", storageError);
-    }
-
-    if (typeof window.fbq === "function") {
-      try {
-        window.fbq(
-          "track",
-          "Purchase",
-          {
-            value: numericValue,
-            currency: "DZD",
-            content_type: "product",
-            content_ids: [String(id ?? "")],
-            content_name: "créme psoriasis",
-            num_items: numericQuantity,
-          },
-          { eventID: orderId },
-        );
-      } catch (trackingError) {
-        console.warn("Meta Purchase tracking failed:", trackingError);
-      }
-    }
-
-    if (window.ttq && typeof window.ttq.track === "function") {
-      try {
-        window.ttq.track("CompletePayment", {
-          event_id: orderId,
-          value: numericValue,
-          currency: "DZD",
-          quantity: numericQuantity,
-          content_type: "product",
-          content_id: String(id ?? ""),
-          content_name: "créme psoriasis",
-        });
-      } catch (trackingError) {
-        console.warn("TikTok Purchase tracking failed:", trackingError);
-      }
-    }
-
-    return true;
-  };
 
   const handleSubmitOrder = async (e) => {
     e.preventDefault();
@@ -332,16 +258,12 @@ function Form({ id }) {
 
       // The order endpoint (Google Apps Script) also answers HTTP 200 when it
       // rejects the request, so the response must be confirmed as a saved order
-      // before the order is treated as successful and the purchase is tracked.
+      // before the order is treated as successful.
       const saved = await orderWasSaved(response);
 
       if (!saved) {
         throw new Error("Order was not confirmed by the order endpoint");
       }
-
-      const finalOrderValue = productsPrice + deliveryPrice;
-
-      firePurchaseOnce(orderId, finalOrderValue, productQty);
 
       localStorage.setItem("lastOrderTime", Date.now().toString());
 
@@ -349,12 +271,17 @@ function Form({ id }) {
 
       setOrderCooldown(true);
       setSubmitError("");
-      setPurchaise(true);
 
-      window.scrollTo({
-        top: 500,
-        behavior: "smooth",
+      // Only a real, server-confirmed order may open the Thank You page. The
+      // marker is written here and verified again by that page.
+      confirmOrder({
+        product: "créme psoriasis",
+        quantity: productQty,
+        offer: selectedOffer === "bundle" ? "02 + 01 مجاناً" : "01",
+        total: productsPrice + deliveryPrice,
       });
+
+      navigate("/thank-you");
     } catch (error) {
       console.error("Order error:", error);
 
@@ -390,27 +317,7 @@ function Form({ id }) {
         </Box>
       ) : (
         <Box>
-          {purchaise ? (
-            <Box margin="50px 0">
-              <Typography
-                sx={{
-                  fontSize: "32px",
-                  textAlign: "center",
-                }}
-              >
-                لقد تم تقديم طلبك بنجاح سيتم الاتصال بك قريباً لتأكيد طلبيتك
-              </Typography>
-
-              <Typography
-                sx={{
-                  fontSize: "32px",
-                  textAlign: "center",
-                }}
-              >
-                شكراً لك
-              </Typography>
-            </Box>
-          ) : fakeBtn ? (
+          {fakeBtn ? (
             <Box margin="50px 0">
               <Typography
                 sx={{
