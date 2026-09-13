@@ -3,6 +3,93 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Box, Typography, TextField, Button } from "@mui/material";
 import { data } from "../data.js";
 
+// Google Apps Script always answers with HTTP 200, even when the request was
+// rejected (unknown function, thrown exception, missing permission, ...).
+// Those answers are Google error pages, not saved orders, so a successful
+// transport response alone is NOT proof that the order exists.
+const ORDER_REJECTED_MARKERS = [
+  "script function not found",
+  "fonction de script introuvable",
+  "función de secuencia de comandos no encontrada",
+  "exception:",
+  "exception :",
+  "accounts.google.com",
+  "authorization is required",
+  "autorisation requise",
+  "unable to open the file",
+];
+
+// An explicit machine-readable outcome (recommended endpoint contract:
+// {"success":true} / {"success":false,"error":"..."}) always wins when the
+// endpoint provides one. This branch stays idle for endpoints that answer with
+// plain text or with nothing at all, so existing behaviour is unchanged.
+const ORDER_FAILURE_VALUES = new Set([
+  "false",
+  "0",
+  "error",
+  "failed",
+  "failure",
+  "ko",
+  "nok",
+]);
+
+const isExplicitFailure = (value) => {
+  if (value === false || value === 0) return true;
+
+  if (typeof value !== "string") return false;
+
+  return ORDER_FAILURE_VALUES.has(value.trim().toLowerCase());
+};
+
+const hasExplicitFailure = (body) => {
+  let payload;
+
+  try {
+    payload = JSON.parse(body);
+  } catch (parseError) {
+    return false;
+  }
+
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    return false;
+  }
+
+  return [
+    payload.success,
+    payload.ok,
+    payload.saved,
+    payload.status,
+    payload.result,
+  ].some(isExplicitFailure);
+};
+
+const orderWasSaved = async (response) => {
+  let body = "";
+
+  try {
+    body = await response.text();
+  } catch (readError) {
+    console.warn("Could not read order response:", readError);
+
+    return false;
+  }
+
+  const normalizedBody = body.toLowerCase();
+
+  // Google rejection / authorization pages: never a saved order.
+  if (ORDER_REJECTED_MARKERS.some((marker) => normalizedBody.includes(marker))) {
+    return false;
+  }
+
+  // Explicit rejection from the order endpoint itself.
+  return !hasExplicitFailure(body);
+};
+
+// Kept in memory for the current session so an order can never be counted twice
+// even when browser storage is unavailable. Keyed by the order id, so it never
+// blocks a future customer or a new order.
+const sentPurchaseOrderIds = new Set();
+
 function Form({ id }) {
   const [wilayaCommuneInfo, setWilayaCommuneInfo] = useState([]);
 
@@ -107,6 +194,10 @@ function Form({ id }) {
   const firePurchaseOnce = (orderId, value, quantityValue) => {
     if (!orderId || typeof window === "undefined") return false;
 
+    if (sentPurchaseOrderIds.has(orderId)) {
+      return false;
+    }
+
     const storageKey = `purchase_sent_${orderId}`;
     let alreadySent = false;
 
@@ -119,6 +210,8 @@ function Form({ id }) {
     if (alreadySent) {
       return false;
     }
+
+    sentPurchaseOrderIds.add(orderId);
 
     const numericValue = Number(value) || 0;
     const numericQuantity = Math.max(1, Number(quantityValue) || 1);
@@ -259,6 +352,15 @@ function Form({ id }) {
 
       if (!response.ok) {
         throw new Error(`Order request failed (${response.status})`);
+      }
+
+      // The order endpoint (Google Apps Script) also answers HTTP 200 when it
+      // rejects the request, so the response must be confirmed as a saved order
+      // before the order is treated as successful and the purchase is tracked.
+      const saved = await orderWasSaved(response);
+
+      if (!saved) {
+        throw new Error("Order was not confirmed by the order endpoint");
       }
 
       const finalOrderValue = productsPrice + deliveryPrice;
