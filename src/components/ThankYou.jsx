@@ -32,7 +32,7 @@ export default function ThankYou() {
   return (
     <Box className="store" dir="rtl">
       <Box className="topbar">
-        الدفع عند الاستلام متوفر • توصيل سريع إلى 58 ولاية
+        الدفع عند الاستلام متوفر • توصيل سريع إلى 69 ولاية
       </Box>
 
       <Box className="thank-you-wrap">
@@ -46,8 +46,12 @@ export default function ThankYou() {
           </Typography>
 
           <Typography className="thank-you-text">
-            شكراً لثقتك بنا. تم استلام طلبك بنجاح وسيتم التواصل معك هاتفياً
-            لتأكيد طلبك قبل الإرسال.
+            كن على استعداد, سيتم الإتصال بك بعد دقائق من فريق خدمة الزبائن
+            لتأكيد طلبيتك
+          </Typography>
+          <Typography className="thank-you-text">
+            نعلم زبائننا الأوفياء أننا لا نرسل طلبات دون تأكيدها لأنها تسبب لنا
+            خسائر كبيرة
           </Typography>
 
           {summary && (
@@ -66,15 +70,6 @@ export default function ThankYou() {
                     <span className="value">{value}</span>
                   </Box>
                 ))}
-
-              {Number.isFinite(Number(summary.total)) && (
-                <Box className="summary-row total">
-                  <span className="label">المجموع</span>
-                  <span className="value">
-                    {Number(summary.total)} دج
-                  </span>
-                </Box>
-              )}
             </Box>
           )}
 
