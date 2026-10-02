@@ -4,8 +4,8 @@ import Form from "./components/Form";
 import { data } from "./data";
 import { useEffect, useState } from "react";
 
-export default function Page17() {
-  const product = data.find((item) => item.id === "l-17");
+export default function Page01() {
+  const product = data.find((item) => item.id === "l-1");
   const [showBtn, setShowBtn] = useState(false);
   useEffect(() => {
     const onScroll = () => {

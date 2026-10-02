@@ -1,16 +1,16 @@
 export const data = [
   {
-    id: "l-17",
-    name: "كريم الصدفية",
+    id: "l-1",
+    name: "سوار ذكي لكل علاقة ❤️",
     slug: "",
     phone: "",
     hashprice: "2900",
-    price: "1900",
-    delevery: "",
+    price: "2200",
+    delevery: "600",
     clr: [],
     size: [],
-    descImag1: "https://i.ibb.co/gZMQdtR5/desc.webp",
-    themImg: "https://i.ibb.co/DfgNKN3w/Chat-GPT-cmprss-promo.webp",
-    url: "https://script.google.com/macros/s/AKfycbw6JUkqmqhcCGD6bZWQ92QfCjvJRqgXlCFVZy0gOF_nZKAIxgjXq9JmfvnjnA85ttiPdg/exec",
+    descImag1: "https://i.ibb.co/yn7G2dRK/desc.webp",
+    themImg: "https://i.ibb.co/27hwgVQK/th.webp",
+    url: "https://script.google.com/macros/s/AKfycby-EiweIoJNfcDqVtDSkMcraqA5z49jt5BogmvCk11bJJ9GGUN0wYIjkW7vqkVj0t0mVA/exec",
   },
 ];
