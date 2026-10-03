@@ -9,8 +9,8 @@ export const data = [
     delevery: "600",
     clr: [],
     size: [],
-    descImag1: "https://i.ibb.co/yn7G2dRK/desc.webp",
-    themImg: "https://i.ibb.co/27hwgVQK/th.webp",
+    descImag1: `${process.env.PUBLIC_URL}/images/01/desc.webp`,
+    themImg: `${process.env.PUBLIC_URL}/images/01/th.webp`,
     url: "https://script.google.com/macros/s/AKfycby-EiweIoJNfcDqVtDSkMcraqA5z49jt5BogmvCk11bJJ9GGUN0wYIjkW7vqkVj0t0mVA/exec",
   },
 ];
