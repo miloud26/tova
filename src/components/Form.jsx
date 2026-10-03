@@ -55,7 +55,9 @@ const orderWasSaved = async (response) => {
   const normalizedBody = body.toLowerCase();
 
   // Google rejection / authorization pages: never a saved order.
-  if (ORDER_REJECTED_MARKERS.some((marker) => normalizedBody.includes(marker))) {
+  if (
+    ORDER_REJECTED_MARKERS.some((marker) => normalizedBody.includes(marker))
+  ) {
     return false;
   }
 
@@ -72,7 +74,7 @@ function Form({ id }) {
   const [commune, setCommune] = useState("");
 
   const [quantity, setQuantity] = useState("1");
-  const [selectedOffer, setSelectedOffer] = useState("single");
+  const [selectedOffer /*setSelectedOffer*/] = useState("single");
 
   const fakeBtn = false;
 
@@ -87,7 +89,7 @@ function Form({ id }) {
 
   const product = data.find((item) => item.id === id) || data[0] || {};
 
-  const { price = 0, delevery = "", url = "" } = product;
+  const { price, delevery, url, name: title } = product;
 
   useEffect(() => {
     let active = true;
@@ -218,7 +220,7 @@ function Form({ id }) {
       );
 
       formData.append("orderId", orderId);
-      formData.append("product", "créme psoriasis");
+      formData.append("product", title);
       formData.append("name", name.trim());
       formData.append("phone", normalizedPhone);
       formData.append("wilaya", wilaya);
@@ -385,31 +387,6 @@ function Form({ id }) {
                   }}
                 >
                   <TextField
-                    required
-                    fullWidth
-                    variant="outlined"
-                    placeholder="الاسم الأول"
-                    value={name}
-                    disabled={isSubmitting}
-                    inputProps={{
-                      dir: "rtl",
-                      "aria-label": "الاسم الأول",
-                    }}
-                    onChange={(e) => setName(e.target.value)}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        height: "50px",
-                        borderRadius: "3px",
-                        fontSize: "14px",
-                      },
-                      "& input::placeholder": {
-                        opacity: 1,
-                        color: "#b7b7b7",
-                      },
-                    }}
-                  />
-
-                  <TextField
                     inputRef={phoneInput}
                     required
                     fullWidth
@@ -425,6 +402,42 @@ function Form({ id }) {
                       maxLength: 10,
                     }}
                     onChange={(e) => setPhone(e.target.value)}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        height: "50px",
+                        borderRadius: "3px",
+                        fontSize: "14px",
+                      },
+                      "& input::placeholder": {
+                        opacity: 1,
+                        color: "#b7b7b7",
+                      },
+                    }}
+                  />
+                  {correctNumber && (
+                    <Typography
+                      sx={{
+                        color: "#d32f2f",
+                        fontSize: "12px",
+                        textAlign: "right",
+                        marginTop: "6px",
+                      }}
+                    >
+                      أدخل رقم هاتف صحيح
+                    </Typography>
+                  )}
+                  <TextField
+                    required
+                    fullWidth
+                    variant="outlined"
+                    placeholder="الاسم الأول"
+                    value={name}
+                    disabled={isSubmitting}
+                    inputProps={{
+                      dir: "rtl",
+                      "aria-label": "الاسم الأول",
+                    }}
+                    onChange={(e) => setName(e.target.value)}
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         height: "50px",
@@ -476,19 +489,6 @@ function Form({ id }) {
                   </select>
                 </Box>
 
-                {correctNumber && (
-                  <Typography
-                    sx={{
-                      color: "#d32f2f",
-                      fontSize: "12px",
-                      textAlign: "right",
-                      marginTop: "6px",
-                    }}
-                  >
-                    أدخل رقم هاتف صحيح
-                  </Typography>
-                )}
-
                 {submitError && (
                   <Typography
                     role="alert"
@@ -517,118 +517,69 @@ function Form({ id }) {
                     ساعة.
                   </Typography>
                 )}
-
-                <Box sx={{ marginTop: "18px" }}>
+                <Box
+                  sx={{
+                    width: "100%",
+                    mt: 2,
+                    mb: 2,
+                    p: 2,
+                    boxSizing: "border-box",
+                    backgroundColor: "#f8f8f8",
+                    border: "1px solid #e5e5e5",
+                    borderRadius: "10px",
+                    direction: "rtl",
+                  }}
+                >
                   <Box
-                    role="button"
-                    tabIndex={0}
-                    aria-pressed={selectedOffer === "single"}
-                    onClick={() => {
-                      if (isSubmitting) return;
-
-                      setSelectedOffer("single");
-                      setQuantity("1");
-                    }}
                     sx={{
                       display: "flex",
+                      justifyContent: "space-between",
                       alignItems: "center",
-                      gap: "10px",
-                      cursor: isSubmitting ? "default" : "pointer",
-                      marginBottom: "17px",
+                      py: 1,
+                      fontSize: "15px",
+                      color: "#555",
                     }}
                   >
-                    <Box
-                      sx={{
-                        width: "27px",
-                        height: "27px",
-                        border: "1px solid #d6d6d6",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        flexShrink: 0,
-                      }}
-                    >
-                      {selectedOffer === "single" && (
-                        <Box
-                          sx={{
-                            width: "15px",
-                            height: "15px",
-                            borderRadius: "50%",
-                            backgroundColor: "#000",
-                          }}
-                        />
-                      )}
-                    </Box>
-
-                    <Typography
-                      sx={{
-                        fontSize: "15px",
-                        fontWeight: 700,
-                        flex: 1,
-                        textAlign: "right",
-                      }}
-                    >
-                      عند طلب علبة 01&nbsp;&nbsp;
-                      {Number(price)} دج
-                    </Typography>
+                    <span>سعر المنتج</span>
+                    <strong style={{ color: "#222", fontWeight: 600 }}>
+                      {product.price} دج
+                    </strong>
                   </Box>
 
                   <Box
-                    role="button"
-                    tabIndex={0}
-                    aria-pressed={selectedOffer === "bundle"}
-                    onClick={() => {
-                      if (isSubmitting) return;
-
-                      setSelectedOffer("bundle");
-                      setQuantity("1");
-                    }}
                     sx={{
                       display: "flex",
+                      justifyContent: "space-between",
                       alignItems: "center",
-                      gap: "10px",
-                      cursor: isSubmitting ? "default" : "pointer",
+                      py: 1,
+                      fontSize: "15px",
+                      color: "#555",
                     }}
                   >
-                    <Box
-                      sx={{
-                        width: "27px",
-                        height: "27px",
-                        border: "1px solid #d6d6d6",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        flexShrink: 0,
-                      }}
-                    >
-                      {selectedOffer === "bundle" && (
-                        <Box
-                          sx={{
-                            width: "15px",
-                            height: "15px",
-                            borderRadius: "50%",
-                            backgroundColor: "#000",
-                          }}
-                        />
-                      )}
-                    </Box>
+                    <span>سعر التوصيل</span>
+                    <strong style={{ color: "#222", fontWeight: 600 }}>
+                      {product.delevery} دج
+                    </strong>
+                  </Box>
 
-                    <Typography
-                      sx={{
-                        fontSize: "15px",
-                        fontWeight: 700,
-                        flex: 1,
-                        textAlign: "right",
-                      }}
-                    >
-                      عند طلب 02 + واحدة مجانًا&nbsp;&nbsp;
-                      {Number(price) * 2} دج
-                    </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      mt: 1,
+                      pt: 1.5,
+                      borderTop: "1px solid #ddd",
+                      fontSize: "18px",
+                      fontWeight: 700,
+                    }}
+                  >
+                    <span>المجموع</span>
+                    <strong style={{ fontSize: "21px", fontWeight: 800 }}>
+                      {+product.price + +product.delevery} دج
+                    </strong>
                   </Box>
                 </Box>
-
                 <Box
                   sx={{
                     marginTop: "18px",

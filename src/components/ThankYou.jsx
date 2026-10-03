@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 import { Box, Button, Paper, Typography } from "@mui/material";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { readConfirmedOrder } from "../confirmedOrder.js";
 
@@ -19,7 +19,7 @@ export default function ThankYou() {
 
   useEffect(() => {
     if (!confirmedOrder) {
-      navigate("/products/page17", { replace: true });
+      navigate(-1);
     }
   }, [confirmedOrder, navigate]);
 
@@ -55,14 +55,8 @@ export default function ThankYou() {
           </Typography>
 
           {summary && (
-            <Box className="thank-you-summary">
-              <Typography className="summary-heading">ملخص الطلب</Typography>
-
-              {[
-                ["المنتج", summary.product],
-                ["الكمية", summary.quantity],
-                ["العرض", summary.offer],
-              ]
+            <Box>
+              {[]
                 .filter(([, value]) => value !== undefined && value !== "")
                 .map(([label, value]) => (
                   <Box className="summary-row" key={label}>
@@ -78,8 +72,7 @@ export default function ThankYou() {
           </Typography>
 
           <Button
-            component={Link}
-            to="/products/page17"
+            onClick={() => navigate(-1)}
             className="primary thank-you-cta"
           >
             العودة إلى المتجر
