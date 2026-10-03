@@ -24,12 +24,27 @@ export default function LandingPage01() {
       ?.scrollIntoView({ behavior: "smooth", block: "center" });
   return (
     <Box className="store" dir="rtl">
-      <Box className="description">
+      <Box
+        className="description"
+        sx={{
+          width: "100%",
+          lineHeight: 0,
+          overflow: "hidden",
+        }}
+      >
         <img
           src={product.descImag1}
           alt="تفاصيل المنتج"
-          loading="lazy"
+          loading="eager"
+          fetchPriority="high"
           decoding="async"
+          style={{
+            display: "block",
+            width: "100%",
+            height: "auto",
+            maxWidth: "100%",
+            objectFit: "contain",
+          }}
         />
       </Box>
 
