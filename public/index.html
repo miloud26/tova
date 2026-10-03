@@ -1,11 +1,211 @@
 <!doctype html>
-<html lang="en">
+<html lang="ar">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fffaf3" />
+    <meta
+      name="description"
+      content="سوار ذكي لكل علاقة — الدفع عند الاستلام وتوصيل سريع إلى 58 ولاية."
+    />
     <title>المتجر الجزائري</title>
 
-    <!-- Meta Pixel Code 
+    <!-- Fonts: preconnect + non-blocking stylesheet. The webfont never blocks
+         first paint; text renders with Tahoma and swaps in when ready. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700;800&family=Rubik:wght@400;600;700;800&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700;800&family=Rubik:wght@400;600;700;800&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700;800&family=Rubik:wght@400;600;700;800&display=swap"
+      />
+    </noscript>
+
+    <!-- Start the above-the-fold image download immediately, in parallel with
+         the JS bundle, instead of waiting for React to mount and render it. -->
+    <!-- Route -> chunk map. Injected at build time by
+         scripts/preload-route-chunks.js; stays null when that step has not
+         run, which simply disables the preloads. -->
+    <script>
+      window.__routeChunks = null;
+    </script>
+    <script>
+      (function () {
+        var path = window.location.pathname;
+        var isLanding = path.indexOf("landingpage01") !== -1;
+        var isProduct = path.indexOf("page01") !== -1;
+
+        // Route chunks. The map is filled in at build time by
+        // scripts/preload-route-chunks.js from webpack's own output, so only
+        // the chunks of the route being opened are fetched — never another
+        // page's code, and code splitting stays exactly as it is. The route
+        // is still rendered by React.lazy; this only removes the wait for
+        // main.js to finish evaluating.
+        var routeChunks = window.__routeChunks;
+
+        if (routeChunks) {
+          var chunkFiles = isLanding
+            ? routeChunks.landing
+            : isProduct
+              ? routeChunks.product
+              : null;
+
+          if (chunkFiles && chunkFiles.length) {
+            for (var c = 0; c < chunkFiles.length; c += 1) {
+              var chunkLink = document.createElement("link");
+
+              chunkLink.rel = "preload";
+              chunkLink.as = "script";
+              chunkLink.href = chunkFiles[c];
+              document.head.appendChild(chunkLink);
+            }
+          }
+        }
+
+        if (isLanding) {
+          // The landing source, so the first paint can show the blurred
+          // artwork preview instead of a generic skeleton.
+          document.documentElement.className += " route-landing";
+        }
+
+        // Must stay identical to the srcSet used in the page components.
+        var srcset = isLanding
+          ? "/images/desc-540.webp 540w, /images/desc-900.webp 900w, /images/desc.webp 1080w"
+          : isProduct
+            ? "/images/hero-500.webp 500w, /images/hero-800.webp 800w, /images/hero.webp 1000w"
+            : null;
+
+        if (!srcset) {
+          return;
+        }
+
+        var preload = document.createElement("link");
+
+        // Only preload when the browser can match the responsive srcset, so we
+        // never download two different sizes of the same picture.
+        if (preload.imageSrcset === undefined) {
+          return;
+        }
+
+        preload.rel = "preload";
+        preload.as = "image";
+        preload.imageSrcset = srcset;
+        preload.imageSizes = isLanding
+          ? "100vw"
+          : "(max-width: 760px) 100vw, 560px";
+        preload.setAttribute("fetchpriority", "high");
+
+        // The tracking scripts below wait for this flag, so the third-party
+        // pixels never pull bytes while the LCP image is still on the wire.
+        // (Chrome hides a pending preload from Resource Timing, so we cannot
+        // detect it that way.)
+        window.__storeMediaPending = true;
+
+        var clearPending = function () {
+          window.__storeMediaPending = false;
+        };
+
+        preload.addEventListener("load", clearPending, { once: true });
+        preload.addEventListener("error", clearPending, { once: true });
+
+        document.head.appendChild(preload);
+      })();
+    </script>
+
+    <!-- Instant first paint: branded background + skeleton shown before (and
+         while) the app bundle loads, so the page never looks blank. -->
+    <style>
+      html {
+        background: #fffaf3;
+      }
+      body {
+        margin: 0;
+      }
+      .boot {
+        min-height: 100vh;
+        background: #fffaf3;
+      }
+      .boot-bar {
+        height: 36px;
+        background: #282018;
+      }
+      .boot-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 26px;
+        padding: 40px 16px;
+      }
+      .boot-block {
+        width: 100%;
+        max-width: 560px;
+        border-radius: 18px;
+        background: linear-gradient(100deg, #f6ecdd 20%, #fff8ee 40%, #f6ecdd 60%);
+        background-size: 220% 100%;
+        animation: boot-shimmer 1.25s linear infinite;
+      }
+      .boot-visual {
+        aspect-ratio: 1 / 1;
+      }
+      .boot-line {
+        height: 22px;
+        border-radius: 10px;
+      }
+      .boot-line.short {
+        max-width: 300px;
+        height: 16px;
+      }
+      /* 1.5 kB blur-up preview of the landing artwork. It is painted by the
+         boot skeleton and by the React image frame (class `art-lqip`), so the
+         whole long page is visible while the sharp image streams in. */
+      .art-lqip,
+      .route-landing .boot-visual {
+        background-color: #f6ecdd;
+        background-image: url("/images/desc-lqip.webp");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+      }
+      .route-landing .boot-body {
+        padding: 0;
+        gap: 0;
+        align-items: stretch;
+      }
+      .route-landing .boot-visual {
+        max-width: none;
+        border-radius: 0;
+        animation: none;
+        aspect-ratio: 1080 / 9720;
+      }
+      .route-landing .boot-line {
+        display: none;
+      }
+      @keyframes boot-shimmer {
+        from {
+          background-position: 120% 0;
+        }
+        to {
+          background-position: -120% 0;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .boot-block {
+          animation: none;
+        }
+      }
+    </style>
+
+    <!-- Meta Pixel Code
     <script>
       !(function (f, b, e, v, n, t, s) {
         if (f.fbq) return;
@@ -43,74 +243,175 @@
 
     End Meta Pixel Code -->
 
-    <!-- TikTok Pixel Code -->
+    <!-- TikTok + Clarity start only once the store's own critical media has
+         finished downloading. They still fire their page view (also on the
+         first interaction or when the tab is hidden), but they no longer pull
+         ~145 kB over the same pipe that is fetching the LCP image / bundle. -->
     <script>
-      !(function (w, d, t) {
-        w.TiktokAnalyticsObject = t;
-        var ttq = (w[t] = w[t] || []);
-        ttq.methods = [
-          "page",
-          "track",
-          "identify",
-          "instances",
-          "debug",
-          "on",
-          "off",
-          "once",
-          "ready",
-          "alias",
-          "group",
-          "enableCookie",
-          "disableCookie",
-        ];
-        ttq.setAndDefer = function (t, e) {
-          t[e] = function () {
-            t.push([e].concat(Array.prototype.slice.call(arguments, 0)));
-          };
-        };
-        for (var i = 0; i < ttq.methods.length; i++) {
-          ttq.setAndDefer(ttq, ttq.methods[i]);
+      (function () {
+        var started = false;
+
+        function loadAnalytics() {
+          if (started) {
+            return;
+          }
+          started = true;
+
+          /* TikTok Pixel Code */
+          !(function (w, d, t) {
+            w.TiktokAnalyticsObject = t;
+            var ttq = (w[t] = w[t] || []);
+            ttq.methods = [
+              "page",
+              "track",
+              "identify",
+              "instances",
+              "debug",
+              "on",
+              "off",
+              "once",
+              "ready",
+              "alias",
+              "group",
+              "enableCookie",
+              "disableCookie",
+            ];
+            ttq.setAndDefer = function (t, e) {
+              t[e] = function () {
+                t.push([e].concat(Array.prototype.slice.call(arguments, 0)));
+              };
+            };
+            for (var i = 0; i < ttq.methods.length; i++) {
+              ttq.setAndDefer(ttq, ttq.methods[i]);
+            }
+            ttq.load = function (e, n) {
+              var r = "https://analytics.tiktok.com/i18n/pixel/events.js";
+              var o = n && n.partner;
+              ttq._i = ttq._i || {};
+              ttq._i[e] = [];
+              ttq._i[e]._u = r;
+              ttq._t = ttq._t || {};
+              ttq._t[e] = +new Date();
+              ttq._o = ttq._o || {};
+              ttq._o[e] = o || {};
+              var a = document.createElement("script");
+              a.type = "text/javascript";
+              a.async = !0;
+              a.src = r + "?sdkid=" + e + "&lib=" + t;
+              var s = document.getElementsByTagName("script")[0];
+              s.parentNode.insertBefore(a, s);
+            };
+
+            ttq.load("D33IDQRC77U0GC4S7H10");
+            ttq.page();
+          })(window, document, "ttq");
+          /* End TikTok Pixel Code */
+
+          /* Microsoft Clarity */
+          (function (c, l, a, r, i, t, y) {
+            c[a] =
+              c[a] ||
+              function () {
+                (c[a].q = c[a].q || []).push(arguments);
+              };
+            t = l.createElement(r);
+            t.async = 1;
+            t.src = "https://www.clarity.ms/tag/" + i;
+            y = l.getElementsByTagName(r)[0];
+            y.parentNode.insertBefore(t, y);
+          })(window, document, "clarity", "script", "y8jc4z44lm");
         }
-        ttq.load = function (e, n) {
-          var r = "https://analytics.tiktok.com/i18n/pixel/events.js";
-          var o = n && n.partner;
-          ttq._i = ttq._i || {};
-          ttq._i[e] = [];
-          ttq._i[e]._u = r;
-          ttq._t = ttq._t || {};
-          ttq._t[e] = +new Date();
-          ttq._o = ttq._o || {};
-          ttq._o[e] = o || {};
-          var a = document.createElement("script");
-          a.type = "text/javascript";
-          a.async = !0;
-          a.src = r + "?sdkid=" + e + "&lib=" + t;
-          var s = document.getElementsByTagName("script")[0];
-          s.parentNode.insertBefore(a, s);
-        };
 
-        ttq.load("D33IDQRC77U0GC4S7H10");
-        ttq.page();
-      })(window, document, "ttq");
-    </script>
-    <!-- End TikTok Pixel Code -->
+        function schedule() {
+          var deadline = Date.now() + 6000;
 
-    <script type="text/javascript">
-      (function (c, l, a, r, i, t, y) {
-        c[a] =
-          c[a] ||
+          // True while the store's own images (LCP included) are still on the
+          // wire.
+          function mediaPending() {
+            if (window.__storeMediaPending) {
+              return true;
+            }
+
+            var imgs = document.images || [];
+
+            for (var i = 0; i < imgs.length; i += 1) {
+              if (!imgs[i].complete) {
+                return true;
+              }
+            }
+
+            var entries = performance.getEntriesByType("resource");
+
+            for (var j = 0; j < entries.length; j += 1) {
+              var entry = entries[j];
+              var isMedia =
+                entry.initiatorType === "img" ||
+                entry.initiatorType === "css" ||
+                entry.initiatorType === "link";
+
+              if (isMedia && entry.responseEnd === 0) {
+                return true;
+              }
+            }
+
+            return false;
+          }
+
+          function start() {
+            if ("requestIdleCallback" in window) {
+              window.requestIdleCallback(loadAnalytics, { timeout: 2000 });
+            } else {
+              window.setTimeout(loadAnalytics, 300);
+            }
+          }
+
+          (function wait() {
+            if (Date.now() < deadline && mediaPending()) {
+              window.setTimeout(wait, 120);
+
+              return;
+            }
+
+            start();
+          })();
+        }
+
+        // Never lose attribution: fire immediately if the visitor interacts or
+        // leaves before the media has settled.
+        ["pointerdown", "keydown", "touchstart"].forEach(function (type) {
+          window.addEventListener(type, loadAnalytics, {
+            once: true,
+            passive: true,
+          });
+        });
+        window.addEventListener(
+          "visibilitychange",
           function () {
-            (c[a].q = c[a].q || []).push(arguments);
-          };
-        t = l.createElement(r);
-        t.async = 1;
-        t.src = "https://www.clarity.ms/tag/" + i;
-        y = l.getElementsByTagName(r)[0];
-        y.parentNode.insertBefore(t, y);
-      })(window, document, "clarity", "script", "y8jc4z44lm");
+            if (document.visibilityState === "hidden") {
+              loadAnalytics();
+            }
+          },
+          { once: true },
+        );
+
+        if (document.readyState === "complete") {
+          schedule();
+        } else {
+          window.addEventListener("load", schedule, { once: true });
+        }
+      })();
     </script>
   </head>
   <body style="position: relative">
-    <div id="root"></div>
+    <div id="root">
+      <div class="boot" dir="rtl" role="status" aria-live="polite">
+        <div class="boot-bar"></div>
+        <div class="boot-body">
+          <div class="boot-block boot-visual"></div>
+          <div class="boot-block boot-line"></div>
+          <div class="boot-block boot-line short"></div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

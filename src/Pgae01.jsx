@@ -4,6 +4,18 @@ import Form from "./components/Form";
 import { data } from "./data";
 import { useEffect, useState } from "react";
 
+// Local, pre-sized copies of the very same product photos — nothing is
+// cropped or re-composed. The browser downloads the lightest file that still
+// matches the screen; public/index.html preloads the exact same set.
+const HERO_SRC = "/images/hero.webp";
+const HERO_SRC_SET =
+  "/images/hero-500.webp 500w, /images/hero-800.webp 800w, /images/hero.webp 1000w";
+const HERO_SIZES = "(max-width: 760px) 100vw, 560px";
+
+const ART_SRC = "/images/desc.webp";
+const ART_SRC_SET =
+  "/images/desc-540.webp 540w, /images/desc-900.webp 900w, /images/desc.webp 1080w";
+
 export default function Page01() {
   const product = data.find((item) => item.id === "l-1");
   const [showBtn, setShowBtn] = useState(false);
@@ -32,8 +44,13 @@ export default function Page01() {
         <Box className="visual">
           <Chip label="الأكثر طلباً" className="badge" />
           <img
-            src={product.themImg}
+            src={HERO_SRC}
+            srcSet={HERO_SRC_SET}
+            sizes={HERO_SIZES}
             alt={product.name}
+            width="1000"
+            height="1000"
+            loading="eager"
             fetchPriority="high"
             decoding="async"
           />
@@ -66,9 +83,14 @@ export default function Page01() {
         <Box className="description">
           <Typography variant="h2">لماذا كريم الصدفية من TOVA؟</Typography>
           <img
-            src={product.descImag1}
+            src={ART_SRC}
+            srcSet={ART_SRC_SET}
+            sizes="100vw"
             alt="تفاصيل المنتج"
+            width="1080"
+            height="9720"
             loading="lazy"
+            fetchPriority="low"
             decoding="async"
           />
         </Box>

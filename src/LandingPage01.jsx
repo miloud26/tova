@@ -4,9 +4,19 @@ import Form from "./components/Form";
 import { data } from "./data";
 import { useEffect, useState } from "react";
 
+// Local, pre-sized copies of the very same long artwork — nothing is cropped,
+// re-composed or re-ordered. The browser picks the lightest file that still
+// matches the screen: phones take one size, large / high-DPI screens keep the
+// full-resolution one. public/index.html preloads the exact same set.
+const ART_SRC = "/images/desc.webp";
+const ART_SRC_SET =
+  "/images/desc-540.webp 540w, /images/desc-900.webp 900w, /images/desc.webp 1080w";
+const ART_SIZES = "100vw";
+
 export default function LandingPage01() {
   const product = data.find((item) => item.id === "l-1");
   const [showBtn, setShowBtn] = useState(false);
+
   useEffect(() => {
     const onScroll = () => {
       const nextShowBtn = window.scrollY > 500;
@@ -25,27 +35,43 @@ export default function LandingPage01() {
   return (
     <Box className="store" dir="rtl">
       <Box
-        className="description"
+        className="description landing-art"
         sx={{
           width: "100%",
           lineHeight: 0,
           overflow: "hidden",
+          border: "1px solid rgba(185,108,32,.1)",
+          borderRadius: "16px",
+          background: "#fff",
+          boxShadow: "0 10px 28px rgba(72,43,18,.07)",
         }}
       >
-        <img
-          src={product.descImag1}
-          alt="تفاصيل المنتج"
-          loading="eager"
-          fetchPriority="high"
-          decoding="async"
-          style={{
-            display: "block",
-            width: "100%",
-            height: "auto",
-            maxWidth: "100%",
-            objectFit: "contain",
-          }}
-        />
+        {/* One single long image. `.art-lqip` paints the 1.5 kB blur-up
+            preview (also used by the boot skeleton in public/index.html)
+            while the full artwork streams in behind it. */}
+        <Box
+          className="art-lqip"
+          sx={{ width: "100%", aspectRatio: "1080 / 9720" }}
+        >
+          <img
+            src={ART_SRC}
+            srcSet={ART_SRC_SET}
+            sizes={ART_SIZES}
+            alt="تفاصيل المنتج"
+            width="1080"
+            height="9720"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            style={{
+              display: "block",
+              width: "100%",
+              height: "auto",
+              maxWidth: "100%",
+              objectFit: "contain",
+            }}
+          />
+        </Box>
       </Box>
 
       <Box width="100%" className="hero" display="flex" justifyContent="center">
